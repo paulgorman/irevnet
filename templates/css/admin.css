@@ -1,0 +1,919 @@
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	background-color: #e6e6e6;
+}
+
+a:link, a:visited {
+	color: #2C6579;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #394C52;
+	text-decoration:underline;
+}
+
+td {
+	font-size:12px;
+}
+
+.adminTitle {
+	font-weight: bold;
+	font-size: 42px;
+	color: #444;
+	margin-left: 10px;
+	padding: 0px 0px 6px 0px;
+	line-height: 40px;
+	letter-spacing: -2px;
+}
+
+.adminNavHolder {
+	text-align: center;
+	font-size: 15px;
+	color: #00529B;
+	border: 1px solid;
+	margin: auto;
+	width: 960px;
+	padding: 15px, 10px, 15px, 10px;
+	background-color: #BDE5F8;
+	overflow: auto;
+}
+
+.adminNavItem {
+	text-align: center;
+	height: 1.5em;              
+	float: left;
+	width: 100px;
+	margin: auto;
+	padding: 4px;
+}
+
+.adminNavSubItem {
+	text-align: center;
+	height: 1.5em;              
+	float: left;
+	margin: auto;
+	padding: 4px;
+	padding-left: 1em;
+	padding-right: 1em;
+}
+
+.adminNavSubPagesItem {
+	text-align: center;
+	height: 1.5em;              
+	float: left;
+	margin: auto;
+	padding: 4px;
+	padding-left: 1em;
+	padding-right: 1em;
+	font-size: 12px;
+}
+
+.adminNavItemSelected {
+	text-align: center;
+	background-color: #AACEDF;
+	height: 1.5em;              
+	border-bottom: 0px;
+	float: left;
+	width: 100px;
+	margin: auto;
+	padding: 4px;
+}
+
+.adminNavSubHolder {
+	text-align: center;
+	font-size: 15px;
+	color: #252d31;
+	background-color: #AACEDF;
+	border: 1px solid;
+	border-top: 0px;
+	border-color: #00529B;
+	margin: auto;
+	width: 960px;
+	padding: 15px, 10px, 15px, 10px;
+	overflow: auto;
+}
+
+.adminNavItem:hover {
+	background-color: #BFEFFF;
+}
+
+.adminNavSubItem:hover, .adminNavSubPagesItem:hover {
+	background-color: #BFEFFF;
+}
+
+.AdminInfo, .AdminSuccess, .AdminWarning, .AdminError, .AdminValidation {
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	width: 900px;
+	border: 1px solid;
+	padding: 15px 10px 15px 50px;
+	background-repeat: no-repeat;
+	background-position: 10px center;
+}
+.AdminInfo {
+	color: #00529B;
+	background-color: #BDE5F8;
+	background-image: url('/templates/icons/Info.png');
+}
+.AdminSuccess {
+	color: #4F8A10;
+	background-color: #DFF2BF;
+	background-image:url('/templates/icons/Add.png');
+}
+.AdminWarning {
+	color: #9F6000;
+	background-color: #FEEFB3;
+	background-image: url('/templates/icons/Attention.png');
+}
+.AdminError {
+	color: #D8000C;
+	background-color: #FFBABA;
+	background-image: url('/templates/icons/Cancel.png');
+}
+
+.AdminCategoryListContainer {
+	color: #9F6000;
+	background-color: #FEEFB3;
+	margin-top: 10px;
+	border: 1px solid;
+	width:960px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.AdminImagesPreviewContainer {
+	margin-left: 30px;
+}
+
+.CheckBoxImageContainer {
+	position: relative; 
+	float: left;
+	margin-left: 10px;
+}
+
+.CheckBoxImage {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+}
+
+.AdminVideoTitle {
+	background-color: #AACEDF;
+	color: #000000;
+	width: 640;
+	border-top: 1px solid;
+	border-bottom: 1px solid;
+	border-color: #e6e6e6;
+	padding: 3px;
+	padding-left: 33px;
+	margin-left: -30px;
+	margin-top: 1em;
+	font-family: "Courier New", Courier, Monaco, monospace;
+}
+
+.AdminVideoPreviewChooserContainer {
+	margin-top: 5px;
+	padding-top: 5px;
+	float: left;
+	background-color: #AACEDF;
+}
+
+.AdminVideoPreviewChooserImage {
+	margin-right: 5px;
+	height: 54px;
+	width: 85px;
+	background-size: contain;
+}
+
+.VideoSize {
+	float: left;
+	width: 85px;
+	height: 54px;
+	padding: 5px;
+}
+
+.AdminImageIconHighRes {
+	position: absolute;
+	z-index: 1;
+	display: block;
+	background-image: url('/templates/icons/Upload.png');
+	background-size: 16px 16px;
+	width: 16px;
+	height:16px;
+	top: 10px;
+	left: 10px;
+}
+
+.AdminImageIconLowRes {
+	position: absolute;
+	z-index: 1;
+	display: block;
+	background-image: url('/templates/icons/Red.png');
+	background-size: 16px 16px;
+	width: 16px;
+	height:16px;
+	top: 10px;
+	left: 10px;
+}
+
+.DropDownImage {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+}
+
+.AdminImagesPreviewNormal {
+	margin: 1px 2px 1px 1px;
+	outline: 1px solid #00529B;
+	outline-offset: -1px;
+	background-color: #3F3F3F; /* woo, transparent PNG's aren't powder blue */
+}
+
+.AdminImagesPreviewHighlighted {
+	margin: 1px 2px 1px 1px;
+	outline: 5px solid #4F8A10;
+	outline-offset: -3px;
+	background-color: #DFF2BF; 
+}
+
+.AdminImagesPreviewNotVisible{
+	margin: 1px 2px 1px 1px;
+	outline: 5px solid #D8002C;
+	outline-offset: -3px;
+	background-color: #FFBABA;
+}
+
+.VideoPlayer {
+	margin: 1px 2px 1px 1px;
+	float: left;
+}
+
+.VideoPlayerNOVIEW {
+	margin: 1px 2px 1px 1px;
+	outline: 5px solid #D8002C;
+	outline-offset: -3px;
+	background-color: #FFBABA;
+	float: left;
+}
+
+.AdminCategoryListHeader {
+	text-align: left;
+	font-weight: bold;
+	font-size: 14px;
+	background-color: #FEEFB3;
+	padding: 4px;
+	width: auto;
+	height: 1.5em;
+	margin-bottom: 4px
+}
+
+.ListPage {
+	float:right;
+	text-align:right;
+}
+
+.ListPageItem {
+	float:left;
+	margin-left:4px;
+	margin-right:4px;
+}
+
+.AdminCategoryListRow {
+	color: #9F6000;
+	background-color: #FFFFFF;
+	font-size: 12px;
+	margin: 2px;
+	border: 1px solid;
+	height: 2em;
+}
+
+.AdminCategoryListRow:hover {
+	color: #00529B;
+	background-color: #BDE5F8;
+	border: 1px solid;
+	cursor: pointer;
+}
+
+.AdminCategoryListItemURL {
+	padding: 4px;
+	float: left;
+	width: 10em;
+	color: #444;
+}
+
+.AdminCategoryListItemCategory {
+	padding: 4px;
+	float: left;
+	width: 17em;
+	color: #444;
+}
+
+.AdminCategoryListItemLastUpdated {
+	padding: 4px;
+	float: left;
+	width: 12em;
+	color: #444;
+}
+
+.AdminCategoryListItemDescription {
+	padding: 4px;
+	float: left;
+	width: 36em;
+	color: #444;
+	height: 1em;
+	overflow: hidden;
+}
+
+.AdminCategoryListItemIcon {
+	float: left;
+	width: 22px;
+	height: 1.5em;
+	vertical-align: top;
+}
+.AdminCategoryListItemShort {
+	float: left;
+	padding: 4px;
+	color: #444;
+	width: 5em;
+	height: 1em;
+	overflow: hidden;
+}
+
+.AdminCategoryRemoveIcon {
+	background-image: url('/templates/icons/Remove Red.png');
+	background-size:18px;
+	background-repeat:no-repeat;
+	padding-left:22px;
+	height: 1.5em;
+	vertical-align: top;
+	float:left;
+}
+
+.AdminCategoryPublishedIcon {
+	background-image: url('/templates/icons/Valid Green.png');
+	background-size:18px;
+	background-repeat:no-repeat;
+	padding-left:22px;
+	height: 1.5em;
+	vertical-align: top;
+	float:left;
+}
+
+.AdminCategoryHighlightedIcon {
+	background-image: url('/templates/icons/Upload.png');
+	background-size:18px;
+	background-repeat:no-repeat;
+	padding-left:22px;
+	height: 1.5em;
+	vertical-align: top;
+	float:left;
+}
+
+.AdminCategoryEmptyIcon {
+	background-image: url('#');
+	background-size:18px;
+	background-repeat:no-repeat;
+	padding-left:22px;
+	height: 1.5em;
+	vertical-align: top;
+	float:left;
+}
+
+.AdminCategoryHiddenIcon {
+	background-image: url('/templates/icons/Stop.png');
+	background-size:18px;
+	background-repeat:no-repeat;
+	padding-left:22px;
+	height: 1.5em;
+	vertical-align: top;
+	float:left;
+}
+
+.AdminCategoryEditIcon {
+	background-image: url('/templates/icons/Snapforward.png');
+	background-size:18px;
+	background-repeat:no-repeat;
+	padding-left:22px;
+	height: 1.5em;
+	vertical-align: top;
+	float:left;
+}
+
+.AdminCategorySearchIcon {
+	background-image: url('/templates/icons/Search.png');
+	background-size: 18px;
+	background-repeat: no-repeat;
+	padding-left: 22px;
+	height: 1.5em;
+	vertical-align:top;
+	float: left;
+}
+
+.AdminCategoryFavoriteIcon {
+	background-image: url('/templates/icons/Favorite.png');
+	background-size: 18px;
+	background-repeat: no-repeat;
+	padding-left: 22px;
+	height: 1.5em;
+	vertical-align:top;
+	float: left;
+}
+
+.AdminCategoryPlusIcon {
+	background-image: url('/templates/icons/Add.png');
+	background-size: 18px;
+	background-repeat: no-repeat;
+	padding-left: 22px;
+	height: 1.5em;
+	vertical-align:top;
+	float: left;
+}
+
+.AdminCategoryInactiveIcon {
+	background-image: url('/templates/icons/Grey.png');
+	background-size: 18px;
+	background-repeat: no-repeat;
+	padding-left: 22px;
+	height: 1.5em;
+	vertical-align:top;
+	float: left;
+}
+
+.AdminCategorySecretIcon {
+	background-image: url('/templates/icons/Blue.png');
+	background-size: 18px;
+	background-repeat: no-repeat;
+	padding-left: 22px;
+	height: 1.5em;
+	vertical-align:top;
+	float: left;
+}
+
+.AdminCategoryListingAddContainer {
+	color: #4F8A10;
+	background-color: #DFF2BF;
+	margin-top: 10px;
+	border: 1px solid;
+	width:960px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.AdminsampleContainer {
+	color: #00529B;
+	background-color: #BDE5F8;
+	margin-top: 10px;
+	border: 1px solid;
+	width:960px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.AdminCategoryListingAddHeader {
+	background-image:url('/templates/icons/Add.png');
+	background-repeat: no-repeat;
+	background-position: 10px top;
+	padding: 10px 0px 10px 0px;
+	text-align: left;
+	font-weight: bold;
+	font-size: 14px;
+	padding: 10px 0px 0px 45px;
+	width: auto;
+	height: 1.5em;
+	margin-bottom: 8px;
+	margin-top: 4px;
+}
+
+.AdminSaveButtonContainer {
+	float: right;
+	padding-right: 100px;
+}
+.AdminSaveLabel {
+	font-weight: bold;
+	font-size: 16px;
+	margin: 10px 2px 0px 0px;
+	float: left;
+	padding-left: 45px;
+	text-align: right;
+}
+
+.AdminSaveButton {
+	border: none;
+	width: 32px;
+	height: 32px;
+	background: url("/templates/icons/Valid Green.png");
+	cursor: pointer;
+	text-indent: 480px;    /* hack to hide the text */
+}
+
+.AdminDeleteButton {
+	border: none;
+	width: 32px;
+	height: 32px;
+	background: url("/templates/icons/Remove Red.png");
+	cursor: pointer;
+	text-indent: 480px;    /* hack to hide the text */
+}
+
+.AdminDeleteButton:hover {
+	background: url("/templates/icons/Attention.png");
+}
+
+.AdminSaveButton:hover {
+	background: url("/templates/icons/Valid Blue.png");
+}
+
+.AdminCategoryListingAddItem {
+	font-weight: bold;
+	font-size: 13px;
+	margin: 2px;
+	float: left;
+	padding-left: 45px;
+	text-align: right;
+}
+
+.AdminsampleLabel{
+	font-weight: bold;
+	font-size: 13px;
+	margin: 2px;
+	float: left;
+	padding-left: 45px;
+	text-align: right;
+}
+
+.AdminsampleCheckboxLabel{
+	font-weight: bold;
+	font-size: 13px;
+	margin: 10px 2px 0px 0px;
+	float: left;
+	padding-left: 45px;
+	text-align: right;
+}
+
+.AdminCategoryListingAddValue {
+	color: #4F8A10;
+	background-color: #e6e6e6;
+	font-size: 12px;
+	margin: 2px;
+	border: 0px solid;
+	height: 2em;
+	float: left;
+}
+
+.AdminCategoryListingAddDropDown {
+	width: 40em;
+	padding-left: 45px;
+}
+
+.AdminCategoryListingAddAnotherDropDown {
+	color: #4F8A10;
+	margin-top: -3em;
+	width: 30em;
+	padding-left: 45px;
+	float:right;
+}
+
+.AdminCategoryListingAddTextBox {
+	color: #4F8A10;
+	font-size: 12px;
+	margin: 2px 0px -10px 2px;
+	border: 0px solid;
+	float: left;
+}
+
+.AdminCategoryListingAddFiles {
+	color: #4F8A10;
+	font-size: 12px;
+	margin: 2px;
+	padding-left: 3em;
+	border: 0px solid;
+	float: left;
+}
+
+.AdminCategoryListingAddFilesSingle {
+	font-size: 12px;
+	margin: 2px;
+	padding-left: 3em;
+	border: 0px solid;
+}
+
+.AdminCategoryListingCheckBox {
+	color: #4F8A10;
+	margin: 2px;
+	float: left;
+	padding-left: 0px;
+	height: 3em;
+}
+
+.AdminCategoryListingShowImage {
+	color: #9F6000;
+	font-size: 12px;
+	margin: 2px;
+	border: 0px solid;
+	height: 2em;
+	float: left;
+	height: 100%;
+	width: 728px;
+}
+
+.AdminCategoryListingAddSubmit {
+	height: 2em;
+	margin: 2px;
+	padding-left: 4em;
+	float: left;
+}
+
+.AdminCategoryListingEditItem {
+	width: 9em;
+	color: #9F6000;
+	font-weight: bold;
+	font-size: 12px;
+	margin: 2px;
+	float: left;
+	padding-left: 45px;
+	text-align: right;
+}
+
+.AdminCategoryListingEditHeader {
+	background-image:url('/templates/icons/Valid Blue.png');
+	background-repeat: no-repeat;
+	background-position: 10px top;
+	padding: 10px 0px 10px 0px;
+	text-align: left;
+	font-weight: bold;
+	font-size: 14px;
+	padding: 10px 0px 0px 45px;
+	width: auto;
+	height: 1.5em;
+	margin-bottom: 8px;
+	margin-top: 4px;
+}
+
+.AdminsampleEditHeader {
+	background-image:url('/templates/icons/Valid Blue.png');
+	background-repeat: no-repeat;
+	background-position: 10px top;
+	background-color: #AACEDF;
+	border-bottom: 1px solid;
+	border-color: #e6e6e6;
+	text-align: left;
+	font-weight: bold;
+	font-size: 2.5em;
+	padding: 0px 0px 0px 50px;
+	width: auto;
+	height: 2.0em;
+}
+
+.AdminsampleEditSubHeader {
+	background-image:url('/templates/icons/Info.png');
+	background-repeat: no-repeat;
+	background-color: #AACEDF;
+	background-position: 10px top;
+	border-top: 1px solid;
+	border-bottom: 1px solid;
+	border-color: #e6e6e6;
+	text-align: left;
+	font-weight: bold;
+	font-size: 24px;
+	padding: 2px 0px 0px 50px;
+	width: auto;
+	height: 1.5em;
+	margin: 2px 0px 10px 0px;
+}
+
+.AdminsampleLastUpdateHeader {
+	text-align: left;
+	font-size: 1em;
+	padding: 0px 0px 0px 65px;
+	width: auto;
+	margin-bottom: 8px;
+	margin-top: -1.9em;
+}
+
+.metricsOverviewBlock {
+	width: 960px;
+	margin: auto;
+}
+
+.metricsBlock {
+	color: #00529B;
+	background-color: #BDE5F8;
+	border: 1px solid;
+	width: 300px;
+	float: left;
+	margin: 8px;
+}
+
+.metricsHeader {
+	text-align:center;
+	font-weight: bold;
+	font-size: 13px;
+	color: #444;
+	background-color: #FEEFB3;
+	padding: 4px;
+	width: auto;
+}
+
+.metricsDomain {
+	padding: 4px;
+	font-size: 12px;
+	height: 2em;
+	color: #444;
+	float: left;
+	width: 150px;
+}
+
+.metricsLabel {
+	padding: 4px;
+	font-size: 12px;
+	color: #444;
+	float: left;
+	width: 40px;
+}
+
+.metricsValue {
+	padding: 4px 0px 0px 0px;
+	font-size: 12px;
+	color: #444;
+	width: 20px;
+	float: right;
+}
+
+.clear {
+	clear: both;
+}
+/* ---- Checkboxes ---- */
+label {
+	display: inline;
+}
+ 
+.regular-checkbox {
+	display: none;
+}
+ 
+.regular-checkbox + label {
+	background-color: #fafafa;
+	border: 1px solid #cacece;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05);
+	padding: 9px;
+	border-radius: 3px;
+	display: inline-block;
+	position: relative;
+}
+ 
+.regular-checkbox + label:active, .regular-checkbox:checked + label:active {
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px 1px 3px rgba(0,0,0,0.1);
+}
+ 
+.regular-checkbox:checked + label {
+	background-color: #e9ecee;
+	border: 1px solid #adb8c0;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05), inset 15px 10px -12px rgba(255,255,255,0.1);
+	color: #99a1a7;
+}
+ 
+.regular-checkbox:checked + label:after {
+	content: '\2714';
+	font-size: 14px;
+	position: absolute;
+	top: 0px;
+	left: 3px;
+	color: #99a1a7;
+}
+ 
+ 
+.big-checkbox + label {
+	padding: 18px;
+}
+ 
+.big-checkbox:checked + label:after {
+	font-size: 28px;
+	left: 6px;
+}
+
+/* ---- search box --- */
+#search {
+
+}
+
+#search input[type="text"] {
+    background: url("/templates/icons/search-white.png") no-repeat 8px 3px #718994;
+    border: 0 none;
+    font: bold 12px; 
+    color: #d7d7d7;
+    width:150px;
+    padding: 3px 15px 3px 35px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+    text-shadow: 0 2px 2px rgba(0, 0, 0, 0.3); 
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.2) inset;
+    -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.2) inset;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.2) inset;
+    -webkit-transition: all 0.7s ease 0s;
+    -moz-transition: all 0.7s ease 0s;
+    -o-transition: all 0.7s ease 0s;
+    transition: all 0.7s ease 0s;
+}
+
+#search input[type="text"]:focus {
+    background: url("/templates/icons/search-dark.png") no-repeat 8px 3px #fcfcfc;
+    color: #6a6f75;
+    width: 160px;
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(0, 0, 0, 0.9) inset;
+    -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(0, 0, 0, 0.9) inset;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(0, 0, 0, 0.9) inset;
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+
+/* ----=== BSM multiselect === ----- */
+.bsmHighlight {
+  color: #777;
+}
+
+.bsmSelect {
+  margin: 0 0 0.25em 1em;
+}
+
+.bsmListSortableCustom li {
+  cursor: move;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  margin: 2px 0;
+}
+
+/* custom */
+
+.bsmList-custom {
+  /* html list that contains selected items */
+  margin: 0.25em 0 0.25em 0;
+  display: block;
+  padding-left: 0;
+  list-style: none;
+}
+
+.bsmListItem-custom {
+  /* li item from the html list above */
+  margin: 0 5px 5px 0;
+  padding: 4px;
+  list-style: none;
+  background: #ddd;
+  border: 1px solid #bbb;
+  line-height: 1em;
+  float: left;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px; 
+}
+
+.bsmListItem-custom:hover {
+  background-color: #e5e5e5;
+  box-shadow: 0 0 3px #aaa;
+  -webkit-box-shadow: 0 0 3px #aaa;
+  -moz-box-shadow: 0 0 3px #aaa;
+}
+
+.bsmListItemLabel-custom {
+  padding-right: 5px;
+}
+
+.bsmListItemRemove-custom {
+  text-decoration: none;
+}
+/* ----=== End BSM Multiselect === ----- */
+
+/* ---=== upload progress bar ===--- */
+#bar_container {
+	margin-left: 300px;
+}
+
+#bar_blank {
+	margin-left: 300px;
+	border: solid 1px #000;
+	height: 20px;
+	width: 300px;
+}
+
+#status {
+	color: #000;
+	position: relative; 
+	float: right;
+	margin-left: 10px;
+	margin-right: 2px;
+}
+
+#bar_color {
+	background-color: #006666;
+	height: 20px;
+	width: 0px;
+}
+
+#bar_blank, #hidden_iframe {
+	display: none;
+}

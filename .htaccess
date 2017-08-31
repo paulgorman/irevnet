@@ -1,0 +1,55 @@
+RewriteEngine on
+
+# turn pretty SEO url's into presence's index.php dispatcher
+
+RewriteRule ^server-status - [L]
+RewriteRule ^server-info - [L]
+RewriteRule ^favicon.ico - [L]
+RewriteRule ^robots.txt - [L]
+RewriteRule ^humans.txt - [L]
+
+RewriteRule ^templates/css/(.*) - [L]
+RewriteRule ^templates/js/(.*) - [L]
+RewriteRule ^templates/icons/(.*) - [L]
+RewriteRule ^templates/jwplayer/(.*) - [L]
+RewriteRule ^templates/irev/(.*) - [L]
+RewriteRule ^templates/skin_modern_silver/(.*) - [L]
+RewriteRule ^templates/skin_minimal_dark_round/(.*) - [L]
+RewriteRule ^favicon.ico - [L]
+
+RewriteRule ^[/]?$ index.php?page=home [QSA,L]
+
+# 	/sample/sample_name or /samples/sample_name or /Sample/Sample_Name will show that one portfolio sample piece
+# 	/portfolio or /category will just show top-level categories
+# $page name and $url
+RewriteRule ^(sample[s]?|nugg[s]?|nugget[s]?|video[s]?|images)[/]?([a-zA-Z0-9_-]+)? index.php?page=sample&url=$2 [QSA,L,NC]
+RewriteRule ^(category|categories|portfolio)[/]?([a-zA-Z0-9_-]+)?[/]?([a-zA-Z0-9_-]+)? index.php?page=categories&url=$2&subcat=$3 [QSA,L,NC] 
+
+# File upload progress bar
+RewriteRule ^uploadprogress[/]? index.php?page=uploadprogress [QSA,L,NC]
+
+# Video started playing
+RewriteRule ^videoplay/([0-9]+) index.php?page=videoplay&mid=$1 [QSA,L,NC]
+
+# Facebook Like Button Logging
+RewriteRule ^liked/(.*) index.php?page=liked&url=$1 [QSA,L,NC]
+RewriteRule ^disliked/(.*) index.php?page=liked&url=$1 [QSA,L,NC]
+
+# Admin Image Uploading
+RewriteRule ^adminpageimageupload[/]? index.php?page=adminpageimageupload [QSA,L,NC]
+RewriteRule ^adminpageimageclipboard[/]? index.php?page=adminpageimageclipboard [QSA,L,NC]
+
+# static pages just a couple possible typos
+RewriteRule ^tag/([a-zA-Z0-9_-]+) /index.php?page=findbytag&tag=$1 [QSA,L,NC]
+RewriteRule ^(irev|irev.net|classic|bbs|irevnet)[/]? /index.php?page=irev [QSA,L,NC]
+RewriteRule ^(about|contact)[/]? /index.php?page=about [QSA,L,NC]
+RewriteRule ^admin[/]?([a-z_-]+)?[/]?([a-z_-]+)?[/]?([a-zA-Z0-9_-]+)? /index.php?page=admin&url=$1&function=$2&listpage=$3 [QSA,L,NC]
+RewriteRule ^login /index.php?page=admin&url=login [QSA,L,NC]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ / [R=302]
+
+<Files ".ht*">
+deny from all
+</Files>

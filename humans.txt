@@ -1,0 +1,33 @@
+/* TEAM */
+
+	Design and Programming:	Paul Gorman
+	Contact: presence@irev.net
+	Twitter: @presence
+	Site: http://irev.net/
+	Location: Seattle, Washington
+
+	Site Effects: FWDesign
+	Site: http://codecanyon.net/user/FWDesign
+
+	Site Scheme: Cowkitty
+	Site: http://cowkitty.net/
+	Location: Burbank, California
+
+/* SITE */
+	Site Name: Presence's Gallery and iRev Hosting Services
+	Site URL: http://irev.net/
+	Doctype: HTML5
+	IDE: Vim
+	Software: Gimp, HexChat, Adobe Creative Suite
+	OS: FreeBSD, Apache, PHP7, MariaDB
+
+/*
+
+        _  ____                         _
+       (_)|  _ \ _____   __  _ __   ___| |_
+       | || |_) / _ \ \ / / | '_ \ / _ \ __|
+       | ||  _ <  __/\ V / _| | | |  __/ |_
+       |_||_| \_\___| \_/ (_)_| |_|\___|\__|
+ I N N E R    R E V O L U T I O N    N E T W O R K S
+
+*/
