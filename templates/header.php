@@ -310,10 +310,10 @@ function htmlBreadcrumb($meta) {
 function htmlFooter($meta) {
 	?>
 			</div><!-- /purple body -->
-			<footer class="col12">
+			<footer class="col12 footergo">
 				<p>
-					Designed and Coded by Paul Gorman &copy; 2017<br>
-					paul@irev.net | (877) 463-1337<br>
+					Designed and <a href="https://github.com/paulgorman/irevnet">Coded</a> by Paul Gorman &copy; 2017<br>
+					<a href="mailto:paul@irev.net">paul@irev.net</a> | (877) 463-1337<br>
 				</p>
 			</footer>
 		</div>

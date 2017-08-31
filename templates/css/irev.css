@@ -404,6 +404,8 @@ footer{
 	color:#b6b6b6;
 	padding-bottom:12px;
 }
+.footergo a:link,.footergo a:visited,.footergo a:active { color: #b6b6b6; }
+.footergo a:hover { color: white; }
 .blue{
 	background-color: #201f2f;
 	border-radius:4px;
