@@ -837,6 +837,7 @@ function iRevPage() {
 function gatherHighlightedsamples() {
 	// get some samples for the homepage carousel
 	global $conn;
+	/*
 	$query = "
 		SELECT `samples`.`name`, `samples`.`display_name`, `samples`.`slug`, 
 		 `samples`.`url`, `samples`.`alt_url`, `samples`.`use_display_name`,
@@ -845,6 +846,15 @@ function gatherHighlightedsamples() {
 		LEFT OUTER JOIN `media` ON `media`.`oid` = `samples`.`oid`
 		WHERE `samples`.`is_active` = 1 AND `samples`.`is_highlighted` = 1 AND `samples`.`is_searchable` = 1
 		AND `media`.`viewable` = 1 AND `media`.`is_highlighted` = 1 ORDER BY RAND()";
+		*/
+	$query = "
+		SELECT `samples`.`name`, `samples`.`display_name`, `samples`.`slug`, 
+		 `samples`.`url`, `samples`.`alt_url`, `samples`.`use_display_name`,
+		 `media`.`filename`, `media`.`thumbwidth`, `media`.`thumbheight`, `samples`.`oid`
+		FROM `samples`
+		LEFT OUTER JOIN `media` ON `media`.`oid` = `samples`.`oid`
+		WHERE `samples`.`is_active` = 1 AND `samples`.`is_highlighted` = 1 AND `samples`.`is_searchable` = 1
+		AND `media`.`is_highlighted` = 1 ORDER BY RAND()";
 	$result = mysqli_query($conn,$query);
 	$samples = array();
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {

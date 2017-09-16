@@ -78,7 +78,7 @@ function htmlMasthead($meta) {
 	?>
 		<header class="col12">
 			<img class="logo" src="/templates/irev/irev-logo.png" title="Portfolio of Paul Gorman" alt="Paul Gorman / iRev.net" />
-			<div class="swoosh"></div>
+			<!-- <div class="swoosh"></div> -->
 		</header>
 	<?
 }
@@ -314,6 +314,9 @@ function htmlFooter($meta) {
 				<p>
 					Designed and <a href="https://github.com/paulgorman/irevnet">Coded</a> by Paul Gorman &copy; 2017<br>
 					<a href="mailto:paul@irev.net">paul@irev.net</a> | (877) 463-1337<br>
+					<a href="http://www.mxguarddog.com/">spam filter in the cloud</a><br>
+					<a href="http://www.diamonds2cash.com/sell-diamonds">sell diamonds online</a>
+
 				</p>
 			</footer>
 		</div>

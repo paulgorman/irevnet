@@ -17,7 +17,7 @@ body{
 }
 header{
 	background-image:url("/templates/irev/header-bg.png");
-	height:191px;
+	height:141px;
 	text-align:center;
 	overflow: hidden;
 	margin-bottom: -38px;
@@ -26,7 +26,7 @@ header{
 	position: relative;
 	z-index: 10;
 	width:100%;
-	max-width:274px;
+	max-width:380px;
 }
 .swoosh{
 	position:absolute;
