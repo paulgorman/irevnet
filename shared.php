@@ -1049,76 +1049,73 @@ function getCommonDivisor($a, $b) {
 
 function AdminDisplaySiteStats() {
 	global $conn;
-	$domains = array();
 	$hits = array();
-	$visitors = array();
-	$query = "SELECT * FROM sitehits where hit_datetime >= '".DatePHPtoSQL(strtotime('-7 days'))."' AND hit_datetime <= '".DatePHPtoSQL(time())."';";
+	$sessions = array();
+	$query = "SELECT * FROM sitehits where hit_datetime >= '".DatePHPtoSQL(strtotime('-7 days'))."' AND hit_datetime <= '".DatePHPtoSQL(time())."' AND hit_url LIKE '%irev.net%';";
 	$result = mysqli_query($conn, $query);
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-		preg_match('@^(?:http://)?(www\.)?([^/]+)@i',$row['hit_url'],$matches);
-		$domain = $matches[2];
-		$domains[$domain] = $domain;
-		$visitors[$domain][$row['hit_ip']] = 1;
-		$hits[$domain] = $hits[$domain] + 1;
+		$visitor = $row['hit_addr'];
+		$hits[$visitor] = $hits[$visitor] + 1;
+		if ($sessions[$visitor] < $row['sesscount']) {
+			$sessions[$visitor] = $row['sesscount'];
+		}
+		arsort($hits);
 	}
 	?>
 		<div class="metricsOverviewBlock">
 		<div class="metricsBlock">
 			<div class="metricsHeader">Website Activity - 7 Days</div>
-			<? foreach ($domains as $domain) { ?>
-				<div class="metricsDomain"><?= $domain; ?></div>
-				<div class="metricsLabel">Visitors:</div>
-				<div class="metricsValue"><?= count($visitors[$domain]); ?></div>
-				<div class="metricsLabel">Hits:</div>
-				<div class="metricsValue"><?= $hits[$domain] + 0; ?></div>
+			<? foreach ($hits as $visit => $hit) { ?>
+				<div class="metricsDomain"><?= $visit; ?></div>
+				<!--<div class="metricsLabel">Hits:</div>-->
+				<div class="metricsValue"><?= $hit + 0; ?>/<?= $sessions[$visit]; ?></div>
 			<? } ?>
 		</div> <!-- class="metricsBlock" -->
 	<?
 	$hits = array();
-	$visitors = array();
-	$query = "SELECT * FROM sitehits where hit_datetime >= '".DatePHPtoSQL(strtotime('-1 day'))."' AND hit_datetime <= '".DatePHPtoSQL(time())."';";
+	$sessions = array();
+	$query = "SELECT * FROM sitehits where hit_datetime >= '".DatePHPtoSQL(strtotime('-1 day'))."' AND hit_datetime <= '".DatePHPtoSQL(time())."' AND hit_url LIKE '%irev.net%';";
 	$result = mysqli_query($conn,$query);
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-		preg_match('@^(?:http://)?(www\.)?([^/]+)@i',$row['hit_url'],$matches);
-		$domain = $matches[2];
-		$domains[$domain] = $domain;
-		$visitors[$domain][$row['hit_ip']] = 1;
-		$hits[$domain] = $hits[$domain] + 1;
+		$visitor = $row['hit_addr'];
+		$hits[$visitor] = $hits[$visitor] + 1;
+		if ($sessions[$visitor] < $row['sesscount']) {
+			$sessions[$visitor] = $row['sesscount'];
+		}
+		arsort($hits);
 	}
 	?>
+		<div class="metricsOverviewBlock">
 		<div class="metricsBlock">
 			<div class="metricsHeader">Website Activity - 24 Hours</div>
-			<? foreach ($domains as $domain) { ?>
-				<div class="metricsDomain"><?= $domain; ?></div>
-				<div class="metricsLabel">Visitors:</div>
-				<div class="metricsValue"><?= count($visitors[$domain]); ?></div>
-				<div class="metricsLabel">Hits:</div>
-				<div class="metricsValue"><?= $hits[$domain] + 0; ?></div>
+			<? foreach ($hits as $visit => $hit) { ?>
+				<div class="metricsDomain"><?= $visit; ?></div>
+				<!--<div class="metricsLabel">Hits:</div>-->
+				<div class="metricsValue"><?= $hit + 0; ?>/<?= $sessions[$visit]; ?></div>
 			<? } ?>
 		</div> <!-- class="metricsBlock" -->
 		<?
 
 	$hits = array();
-	$visitors = array();
-	$query = "SELECT * FROM sitehits where hit_datetime >= '".DatePHPtoSQL(strtotime('-7 days'))."' AND hit_datetime <= '".DatePHPtoSQL(time())."';";
-	$query = "SELECT * FROM sitehits where hit_datetime >= '".DatePHPtoSQL(strtotime('-1 hour'))."' AND hit_datetime <= '".DatePHPtoSQL(time())."';";
+	$sessions = array();
+	$query = "SELECT * FROM sitehits where hit_datetime >= '".DatePHPtoSQL(strtotime('-1 hour'))."' AND hit_datetime <= '".DatePHPtoSQL(time())."' AND hit_url LIKE '%irev.net%';";
 	$result = mysqli_query($conn, $query);
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-		preg_match('@^(?:http://)?(www\.)?([^/]+)@i',$row['hit_url'],$matches);
-		$domain = $matches[2];
-		$domains[$domain] = $domain;
-		$visitors[$domain][$row['hit_ip']] = 1;
-		$hits[$domain] = $hits[$domain] + 1;
+		$visitor = $row['hit_addr'];
+		$hits[$visitor] = $hits[$visitor] + 1;
+		if ($sessions[$visitor] < $row['sesscount']) {
+			$sessions[$visitor] = $row['sesscount'];
+		}
+		arsort($hits);
 	}
 	?>
+		<div class="metricsOverviewBlock">
 		<div class="metricsBlock">
 			<div class="metricsHeader">Website Activity - 60 Minutes</div>
-			<? foreach ($domains as $domain) { ?>
-				<div class="metricsDomain"><?= $domain; ?></div>
-				<div class="metricsLabel">Visitors:</div>
-				<div class="metricsValue"><?= count($visitors[$domain]); ?></div>
-				<div class="metricsLabel">Hits:</div>
-				<div class="metricsValue"><?= $hits[$domain] + 0; ?></div>
+			<? foreach ($hits as $visit => $hit) { ?>
+				<div class="metricsDomain"><?= $visit; ?></div>
+				<!--<div class="metricsLabel">Hits:</div>-->
+				<div class="metricsValue"><?= $hit + 0; ?>/<?= $sessions[$visit]; ?></div>
 			<? } ?>
 		</div> <!-- class="metricsBlock" -->
 		</div> <!-- class="MetricsOverviewBlock" -->
