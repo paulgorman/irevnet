@@ -1750,7 +1750,7 @@ function AdminSampleSaveSingle() {
 		$samplesave['is_active'] = $is_active;
 	}
 	// searchable?
-	$is_searchable = isset($_REQUEST['is_searchable']);
+	isset($_REQUEST['is_searchable']) ? $is_searchable = 1 : $is_searchable = 0;
 	if ($is_searchable != $sampleinfo['is_searchable']) {
 		$samplesave['is_searchable'] = $is_searchable;
 	}
