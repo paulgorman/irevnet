@@ -5,7 +5,7 @@
 **
 **  Code: Presence
 **
-**  Last Edit: 20171012
+**  Last Edit: 20190508
 ****************************************/
 
 function Init() {
@@ -1744,13 +1744,12 @@ function AdminSampleSaveSingle() {
 		}
 	}
 	// use display
-	//$use_display_name = isset($_REQUEST['use_display_name']);
 	isset($_REQUEST['use_display_name']) ? $use_display_name = 1 : $use_display_name = 0;
 	if ($use_display_name != $sampleinfo['use_display_name']) {
 		$samplesave['use_display_name'] = $use_display_name;
 	}
 	// active?
-	$is_active = isset($_REQUEST['is_active']);
+	isset($_REQUEST['is_active']) ? $is_active = 1 : $is_active = 0;
 	if ($is_active != $sampleinfo['is_active']) {
 		$samplesave['is_active'] = $is_active;
 	}
@@ -1760,7 +1759,6 @@ function AdminSampleSaveSingle() {
 		$samplesave['is_searchable'] = $is_searchable;
 	}
 	// highlighted?
-	//$is_highlighted = isset($_REQUEST['is_highlighted']);
 	isset($_REQUEST['is_highlighted']) ? $is_highlighted = 1 : $is_highlighted = 0;
 	if ($is_highlighted != $sampleinfo['is_highlighted']) {
 		$samplesave['is_highlighted'] = $is_highlighted;
@@ -2120,11 +2118,9 @@ function AdminsampleSaveNew() {
 	} else {
 		$display_name = UniqueObfuscatedsampleName(htmlspecialchars(makeCase(convert_smart_quotes(trim($_REQUEST['display_name'])))));
 	}
-	//$use_display_name = isset($_REQUEST['use_display_name']);
 	isset($_REQUEST['use_display_name']) ? $use_display_name = 1 : $use_display_name = 0;
 	$is_active = isset($_REQUEST['is_active']);
 	isset($_REQUEST['is_searchable']) ? $is_searchable = 1 : $is_searchable = 0;
-	//$is_highlighted = isset($_REQUEST['is_highlighted']);
 	isset($_REQUEST['is_highlighted']) ? $is_highlighted = 1 : $is_highlighted = 0;
 	if (isset($_REQUEST['categories'])) {
 		$categories = array();
@@ -2829,13 +2825,14 @@ function AdminsampleDeleteGo($oid) {
 		$filename = $row['filename'];
 		if ($row['filetype'] == "mp4") {
 			unlink ("$dirlocation/m/$filename");
+			echo "XXX: unlink $dirlocation m $filename\n";
 		} else {
 			unlink ("$dirlocation/i/sample/$filename");
 			unlink ("$dirlocation/i/sample/original-$filename");
 		}
 	}
 	// delete from database tables
-	$tables = array("samplestyles","samplecategories","samplelocations","samplemembers","media","samples");
+	$tables = array("samplestyles","samplecategories","samplelocations","samplesubcategories","media","samples");
 	$error = 0;
 	foreach ($tables as $table) {
 		$query = "DELETE FROM `$table` WHERE `oid` = $oid";

@@ -68,7 +68,7 @@ CREATE TABLE `irevnet`.`categories` (
 CREATE TABLE `irevnet`.`media` (
 	`mid` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`oid` INT NOT NULL,
-	`name` VARCHAR(50),
+	`name` VARCHAR(80),
 	`filename` VARCHAR(80),
 	`filetype` VARCHAR(4),
 	`thumbwidth` INT,

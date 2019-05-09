@@ -30,6 +30,6 @@ Notes
 -----
 alias ci='git add -A;git commit;git push origin master;'
 
-Depends upon ffmpeg, mod_h264_streaming, php7, mariaDB, ImageMagick 
+Depends upon ffmpeg with ffprobe, mod_h264_streaming, php7, mariaDB, ImageMagick 
 
 PHP modules: fileinfo, gd, mysqli, session, exif, hash, iconv, phar
