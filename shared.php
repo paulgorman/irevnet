@@ -51,8 +51,8 @@ function RecordHit() {
 	global $conn;
 	$query = sprintf("INSERT INTO `sitehits` (`hit_datetime`, `hit_ip`, `hit_addr`, `hit_url`, `referrer`, `user_agent`, `sessionid`, `sesscount`) values ('%s','%s','%s','%s','%s','%s', '%s', %s);",
 		mysqli_real_escape_string($conn, DatePHPtoSQL(time())),
-		mysqli_real_escape_string($conn, getIP()),		// added for irev.net / new.irev.net server proxy to see x-forwarded-for
-		mysqli_real_escape_string($conn, getHost()),	// added for proxy
+		mysqli_real_escape_string($conn, $_SERVER['REMOTE_ADDR']),
+		mysqli_real_escape_string($conn, $_SERVER['REMOTE_HOST']),
 		mysqli_real_escape_string($conn, $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']),
 		mysqli_real_escape_string($conn, $_SERVER['HTTP_REFERER']),
 		mysqli_real_escape_string($conn, $_SERVER['HTTP_USER_AGENT']),
@@ -120,7 +120,7 @@ function ConfirmLogin() {
 			$_SESSION['is_admin'] = TRUE;
 			// XXX: half-ass way to log admin logins
 			error_log("Admin Page Login Success: $username" , 0); 
-			header("Location: http://". $_SERVER['HTTP_HOST'] ."/admin/", TRUE, 302);
+			header("Location: https://". $_SERVER['HTTP_HOST'] ."/admin/", TRUE, 302);
 		} else {
 			error_log("Admin Page Login Password Failure: $username" , 0); 
 			htmlAdminLogin("Invalid Password");
@@ -140,7 +140,7 @@ function SamplePage() {
 	require_once("templates/Parsedown/Parsedown.php");
 	if (isEmpty($_REQUEST['url'])) {
 		// Whoops, no sample name in the URL, show the categories
-		header("Location: http://". $_SERVER['HTTP_HOST'] ."/categories", TRUE, 302);
+		header("Location: https://". $_SERVER['HTTP_HOST'] ."/categories", TRUE, 302);
 	} else {
 		$url = MakeURL(strtolower(trim($_REQUEST['url'])));
 		$sampleinfo = getSampleInfoFromURL($url);
@@ -181,7 +181,7 @@ function SamplePage() {
 			htmlFooter($meta);
 			//fwdConsGrid(); // dump this stuff in at the bottom of html
 		} elseif (count($sampleinfo) === 0) {
-			header("Location: http://". $_SERVER['HTTP_HOST'] ."/categories", TRUE, 302);
+			header("Location: https://". $_SERVER['HTTP_HOST'] ."/categories", TRUE, 302);
 		}
 	}
 }
@@ -401,7 +401,11 @@ function getSampleInfoFromURL($url) {
 		// XXX Hardcoded at 850 characters
 		// Split the sample Bio into Nice Fitting Space and include "More" link to display more text
 		// XXX FixMe:  If just one dangling sentence remains, just include it please. 
-		if (isMobileDev() > 0) {
+
+// XXX: Presence 20180403 TEMP RESTORE ME PLZ AFTER A WEEK
+// XXX: Presence 20190508 or maybe not.  I dunno yet.
+		//if (isMobileDev() > 0) {
+		if (false) {
 			$samplenames[$oid]['bio'] = Parsedown::instance()->parse(htmlspecialchars_decode($samplenames[$oid]['bio']));
 		} else {
 			$bio = $samplenames[$oid]['bio'];
@@ -524,9 +528,10 @@ function getSampleSubCategory ($oid) {
 	}
 }
 
-function FaceBookLike() {
+function FaceBookLike($sampleinfo) {
 	$url = CurPageURL();                                                                                                                                                         
-	if (getDntStatus() === FALSE) {
+	// if they don't mind tracking, and the sample is searchable, show a facebook like button
+	if (getDntStatus() === FALSE && $sampleinfo['is_searchable'] == 1) {
 		?>
 			<div id="fb-root"></div>
 			<div style="margin-bottom: 10px;" class="fb-like" data-colorscheme="dark" data-href="<?= $url; ?>" data-width="320" data-layout="standard" data-action="like" data-show-faces="false" data-share="true"></div>
@@ -1013,7 +1018,7 @@ function DisplayVideoPlayer($sampleinfo) {
 			],
 			'author': 'Paul Gorman',
 			'description': '<?= ($sampleinfo['use_display_name'])? htmlspecialchars($sampleinfo['display_name'], ENT_QUOTES) : htmlspecialchars($sampleinfo['name'], ENT_QUOTES); ?>',
-			'file': 'http://media.irev.net/m/<?= $sampleinfo['media']['filename']; ?>',
+			'file': 'https://irev.net/m/<?= $sampleinfo['media']['filename']; ?>',
 			'image': '/i/sample/<?= $sampleinfo['media']['previewimage']; ?>',
 			'duration': '<?= $sampleinfo['media']['vidlength']; ?>',
 			'controlbar': 'over',
@@ -1026,7 +1031,7 @@ function DisplayVideoPlayer($sampleinfo) {
 		});
 		jwplayer('container<?= $sampleinfo['media']['mid']; ?>').onPlay(function() {
 			var oRequest = new XMLHttpRequest();
-			var sURL = "http://" + self.location.hostname + "/videoplay/<?= $sampleinfo['media']['mid']; ?>";
+			var sURL = "https://" + self.location.hostname + "/videoplay/<?= $sampleinfo['media']['mid']; ?>";
 			oRequest.open("GET",sURL,true);
 			oRequest.setRequestHeader("User-Agent",navigator.userAgent);
 			oRequest.send(null)
@@ -2118,7 +2123,7 @@ function AdminsampleSaveNew() {
 	//$use_display_name = isset($_REQUEST['use_display_name']);
 	isset($_REQUEST['use_display_name']) ? $use_display_name = 1 : $use_display_name = 0;
 	$is_active = isset($_REQUEST['is_active']);
-	$is_searchable = isset($_REQUEST['is_searchable']);
+	isset($_REQUEST['is_searchable']) ? $is_searchable = 1 : $is_searchable = 0;
 	//$is_highlighted = isset($_REQUEST['is_highlighted']);
 	isset($_REQUEST['is_highlighted']) ? $is_highlighted = 1 : $is_highlighted = 0;
 	if (isset($_REQUEST['categories'])) {
@@ -3233,9 +3238,9 @@ function AdminSaveNewCategory() {
 		}
 
 		if (strlen($_REQUEST['published'])) {
-			$published = TRUE;
+			$published = 1;
 		} else {
-			$published = FALSE;
+			$published = 0;
 		}
 		$query = sprintf("INSERT INTO `categories` (`url`,`category`,`description`,`force_display_names`,`published`,`is_highlighted`,`carousel_id`,`carousel_filename`,`image_filename`,`image_id`, `last_updated`) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
 			mysqli_real_escape_string($conn,$url),
@@ -4058,6 +4063,7 @@ function AltClosestWord($misspelled,$suggestions) {
 function getDntStatus() {
 	// returns TRUE if Do-Not-Track is on and is equal to 1,
 	// returns FALSE if DNT is unset or not equal to 1.
+	// return (FALSE); // force my facebook like button
 	return (isset($_SERVER['HTTP_DNT']) && $_SERVER['HTTP_DNT'] == 1);
 }
 
@@ -4095,6 +4101,28 @@ function getIP() {
 				}
 			}
 		}
+	}
+}
+
+if( !function_exists('apache_request_headers') ) {
+	function apache_request_headers() {
+		$arh = array();
+		$rx_http = '/\AHTTP_/';
+		foreach($_SERVER as $key => $val) {
+			if( preg_match($rx_http, $key) ) {
+				$arh_key = preg_replace($rx_http, '', $key);
+				$rx_matches = array();
+				$rx_matches = explode('_', $arh_key);
+				if( count($rx_matches) > 0 and strlen($arh_key) > 2 ) {
+					foreach($rx_matches as $ak_key => $ak_val) {
+						$rx_matches[$ak_key] = ucfirst($ak_val);
+					}
+					$arh_key = implode('-', $rx_matches);
+				}
+				$arh[$arh_key] = $val;
+			}
+		}
+	return( $arh );
 	}
 }
 

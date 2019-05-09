@@ -41,6 +41,7 @@ function htmlHeader($dataArray) {
 		<link rel="canonical" href="<?= $dataArray['url']; ?>" />
 		<link rel="stylesheet" type="text/css" href="/templates/css/responsiveboilerplate.css">
 		<link rel="stylesheet" type="text/css" href="/templates/css/irev.css">
+		<link href="https://micro.blog/presence" rel="me" />
 		<? if (isset($dataArray['css'])) { foreach ($dataArray['css'] as $css) { ?> 
 			<link rel="stylesheet" href="/templates/css/<?= $css; ?>" />
 		<? } } ?>
@@ -312,7 +313,7 @@ function htmlFooter($meta) {
 			</div><!-- /purple body -->
 			<footer class="col12 footergo">
 				<p>
-					Designed and <a href="https://github.com/paulgorman/irevnet">Coded</a> by Paul Gorman &copy; 2017<br>
+					Designed and <a href="https://github.com/paulgorman/irevnet">Coded</a> by Paul Gorman &copy; 2019<br>
 					<a href="mailto:paul@irev.net">paul@irev.net</a> | (877) 463-1337<br>
 					<a href="http://www.mxguarddog.com/">spam filter in the cloud</a><br>
 					<a href="http://www.diamonds2cash.com/sell-diamonds">sell diamonds online</a>

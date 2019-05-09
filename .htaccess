@@ -7,6 +7,8 @@ RewriteRule ^server-info - [L]
 RewriteRule ^favicon.ico - [L]
 RewriteRule ^robots.txt - [L]
 RewriteRule ^humans.txt - [L]
+RewriteRule ^x.php - [L]
+RewriteRule ^x/ - [L]
 
 RewriteRule ^templates/css/(.*) - [L]
 RewriteRule ^templates/js/(.*) - [L]
@@ -22,7 +24,7 @@ RewriteRule ^[/]?$ index.php?page=home [QSA,L]
 # 	/sample/sample_name or /samples/sample_name or /Sample/Sample_Name will show that one portfolio sample piece
 # 	/portfolio or /category will just show top-level categories
 # $page name and $url
-RewriteRule ^(sample[s]?|nugg[s]?|nugget[s]?|video[s]?|images)[/]?([a-zA-Z0-9_-]+)? index.php?page=sample&url=$2 [QSA,L,NC]
+RewriteRule ^(sample[s]?|nugg[s]?|nugget[s]?|video[s]?|image[s]?)[/]?([a-zA-Z0-9_-]+)? index.php?page=sample&url=$2 [QSA,L,NC]
 RewriteRule ^(category|categories|portfolio)[/]?([a-zA-Z0-9_-]+)?[/]?([a-zA-Z0-9_-]+)? index.php?page=categories&url=$2&subcat=$3 [QSA,L,NC] 
 
 # File upload progress bar

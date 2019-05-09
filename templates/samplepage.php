@@ -31,7 +31,7 @@ function htmlsamplePageTop($sampleinfo) {
 				<div class="sampleBio">
 					<?= $sample['bio']; ?>
 				</div>
-			<? FaceBookLike(); ?>
+			<? FaceBookLike($sample); ?>
 			</div>
 			<div class="clearfix"></div>
 			<div class="sampleVideo">
