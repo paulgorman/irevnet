@@ -313,8 +313,7 @@ function htmlFooter($meta) {
 			</div><!-- /purple body -->
 			<footer class="col12 footergo">
 				<p>
-					Designed and <a href="https://github.com/paulgorman/irevnet">Coded</a> by Paul Gorman &copy; 2019<br>
-					<a href="mailto:paul@irev.net">paul@irev.net</a> | (877) 463-1337<br>
+					Designed and <a href="https://github.com/paulgorman/irevnet">Coded</a> by <a href="mailto:paul@irev.net">Paul Gorman</a> &copy;<? echo date("Y"); ?><br>
 					<a href="http://www.mxguarddog.com/">spam filter in the cloud</a><br>
 					<a href="http://www.diamonds2cash.com/sell-diamonds">sell diamonds online</a>
 

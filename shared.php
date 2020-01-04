@@ -192,7 +192,7 @@ function getSampleMetaTags($sampleinfo) {
 	$meta['keywords'] = "iRev.net, iRev, Inner Revolution Networks, ";
 	foreach (array_keys($sampleinfo) as $key) {
 		$meta['keywords'] .= $sampleinfo[$key]['name'] . ", ";
-		if (count($sampleinfo[$key]['categories']) > 0) {
+		if (is_countable($sampleinfo[$key]['categories'])) {
 			foreach (array_keys($sampleinfo[$key]['categories']) as $subkey) {
 				$meta['keywords'] .= $sampleinfo[$key]['categories'][$subkey] . ", ";
 			}
@@ -225,7 +225,7 @@ function getSampleMetaTags($sampleinfo) {
 		$meta['title'] .= $sampleinfo[$key]['name'];
 		$meta['title'] .= " - ";
 		$meta['title'] .= $sampleinfo[$key]['slug'];
-		if (count($sampleinfo[$key]['categories']) > 0) {
+		if (is_countable($sampleinfo[$key]['categories'])) {
 			$meta['title'] .= " (";
 			foreach (array_keys($sampleinfo[$key]['categories']) as $subkey) {
 				$meta['title'] .= $sampleinfo[$key]['categories'][$subkey] . ", ";
@@ -1777,7 +1777,7 @@ function AdminSampleSaveSingle() {
 	}
 	// subcategories
 	$subcategories = array();
-	if (count($_REQUEST['subcategories']) > 0 ) {
+	if (is_countable($_REQUEST['subcategories'])) {
 		foreach ($_REQUEST['subcategories'] as $key => $value) {
 			$subcategories[$key] = preg_replace("/[^0-9]/","",$value);
 		}
@@ -1835,7 +1835,7 @@ function AdminSampleSaveSingle() {
 			}
 		}
 		foreach (array("samplecategories" => "cid","samplestyles" => "sid","samplelocations" => "lid", "samplesubcategories" => "subid") as $table => $column) {
-			if ( (count($samplesave[$table]) > 0) || ($table == "samplesubcategories") ){
+			if ( is_countable($samplesave[$table]) || ($table == "samplesubcategories") ){
 				// wipe out old data
 				$query = sprintf("DELETE FROM `%s` WHERE `oid` =  '%s'", 
 					mysqli_real_escape_string($conn, $table),
@@ -1957,7 +1957,7 @@ function PrepareVideoPlayer($input) {
 		// I am the sampleinfo's media keyed array
 		// If this is used, SHOW ALL (viewable) VIDEOS
 		//if (is_array($sampleinfo['media'])) { // are there videos here (fixes error on the foreach line below)
-		if (count($sampleinfo['media']['vidlength']) > 0) { // This too does not actually count videos. grr, c'mon.
+		if (is_countable($sampleinfo['media']['vidlength'])) { 
 			// run the loop once so I have an accurate video count plz
 			foreach ($sampleinfo['media']['mid'] as $mid) {
 				if (((string)$_REQUEST['page'] === 'admin' OR (string)$sampleinfo['media']['viewable'][$mid] == '1') AND ($sampleinfo['media']['vidlength'][$mid] > 0)) {
@@ -2279,7 +2279,7 @@ function AdminsampleSaveMedia($oid) {
 			}
 		}
 	}
-	if (count($errors) > 0) {
+	if (is_countable($errors)) {
 		foreach ($errors as $error) {
 			echo "<div class='AdminError'><B>$error</B></div>";
 		}
@@ -2997,7 +2997,7 @@ function AdminSelectCategories($oid = NULL) {
 			// if sample is assigned to category is in the database
 			$s++;
 		}
-		if (($_REQUEST['formpage'] == 1) && (count($_REQUEST['categories']) > 0)) {
+		if (($_REQUEST['formpage'] == 1) && is_countable($_REQUEST['categories'])) {
 			// if this is from the new sample webform...
 			if (strlen(array_search($cid,$_REQUEST['categories'])) > 0) { // LAME: array_search returns null for a key that's "0"
 				// if sample selected to category from form page 1
@@ -3144,7 +3144,7 @@ function AdminSelectStyles($oid = NULL) {
 		if ($samplestyles[$sid]) {
 			$s++;
 		}
-		if (($_REQUEST['formpage'] == 1) && (count($_REQUEST['styles']) > 0)) {
+		if (($_REQUEST['formpage'] == 1) && (is_countable($_REQUEST['styles']))) {
 			if (strlen(array_search($sid,$_REQUEST['styles'])) > 0) {
 				$s++;
 			}
