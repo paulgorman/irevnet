@@ -771,7 +771,7 @@ function HomePage() {
 	$meta['description'] = "Presence's Gallery of Projects, Photos, and Videos / iRev.net Web, Shell, and Email Hosting";
 	$meta['title'] = "Paul Gorman's Gallery of Projects, Photos, and Videos / iRev.net Web, Shell, and Email Hosting";
 	$meta['url'] = CurPageURL();
-	$meta['image'] = CurServerUrl() . "iRev.png";
+	$meta['image'] = CurServerUrl() . "templates/irev/irev-logo.png";
 	$meta['css'][] = "skin_modern_silver.css";
 	$meta['js'][] = "justifiedGallery.js";
 	$meta['js'][] = "jwplayer/jwplayer.js";
