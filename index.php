@@ -26,10 +26,12 @@
 		case "irev":
 			RecordHit();
 			iRevPage();
+			ScriptTime($starttime);
 			break;
 		case "about":
 			RecordHit();
 			AboutPage();
+			ScriptTime($starttime);
 			break;
 		case "uploadprogress":
 			UploadProgress();

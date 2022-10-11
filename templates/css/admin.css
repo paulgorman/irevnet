@@ -724,7 +724,7 @@ td {
 	height: 3em;
 	color: #444;
 	float: left;
-	width: 250px;
+	width: 210px;
 }
 
 .metricsLabel {
@@ -739,7 +739,7 @@ td {
 	padding: 4px 1em 0px 0px;
 	font-size: 12px;
 	color: #444;
-	width: 20px;
+	width: 40px;
 	float: right;
 }
 

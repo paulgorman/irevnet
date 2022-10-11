@@ -144,7 +144,8 @@ function SamplePage() {
 	} else {
 		$url = MakeURL(strtolower(trim($_REQUEST['url'])));
 		$sampleinfo = getSampleInfoFromURL($url);
-		if (count($sampleinfo) !== 1) {
+		if (!is_countable($sampleinfo)) {
+			// no exact match
 			$query = "SELECT `url`,`alt_url`,`name` FROM `samples` WHERE `is_active` = 1";
 			$result = mysqli_query($conn,$query);
 			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
@@ -155,7 +156,7 @@ function SamplePage() {
 			$sampleinfo = getSampleInfoFromURL($closestsample);
 			// show multiple matching sample chooser
 			// XXX: Not Done
-		} 
+		}
 		if (count($sampleinfo) === 1) {
 			$sampleinfo = obfuscatesampleInfo($sampleinfo);
 			$sampleinfo = insertBreadCrumb($sampleinfo);
@@ -181,7 +182,9 @@ function SamplePage() {
 			htmlFooter($meta);
 			//fwdConsGrid(); // dump this stuff in at the bottom of html
 		} elseif (count($sampleinfo) === 0) {
-			header("Location: https://". $_SERVER['HTTP_HOST'] ."/categories", TRUE, 302);
+			//header("Location: https://". $_SERVER['HTTP_HOST'] ."/categories", TRUE, 302);
+			$closestsample = AltClosestWord($_REQUEST['url'],$urls);
+			$sampleinfo = getSampleInfoFromURL($closestsample);
 		}
 	}
 }
@@ -477,7 +480,8 @@ function getSampleCategory($oid) {
 		$query = sprintf(
 			"SELECT `categories`.`cid` FROM `categories` 
 			 LEFT OUTER JOIN `samplecategories` ON `categories`.`cid` = `samplecategories`.`cid` 
-			 WHERE `samplecategories`.`oid` = '%s' AND `categories`.`published` = 1 ORDER BY `categories`.`is_highlighted` DESC, `categories`.`category` ASC",
+			 WHERE `samplecategories`.`oid` = '%s' AND `categories`.`published` = 1 
+			 ORDER BY `categories`.`is_highlighted` DESC, `categories`.`category` ASC",
 			mysqli_real_escape_string($conn,$oid)
 		);
 		$result = mysqli_query($conn,$query);
@@ -1070,7 +1074,9 @@ function AdminDisplaySiteStats() {
 		<div class="metricsOverviewBlock">
 		<div class="metricsBlock">
 			<div class="metricsHeader">Website Activity - 7 Days</div>
-			<? foreach ($hits as $visit => $hit) { ?>
+			<? foreach ($hits as $visit => $hit) { 
+				if ($sessions[$visit] == 0) { continue; }
+				?>
 				<div class="metricsDomain"><?= $visit; ?></div>
 				<!--<div class="metricsLabel">Hits:</div>-->
 				<div class="metricsValue"><?= $hit + 0; ?>/<?= $sessions[$visit]; ?></div>
@@ -1093,7 +1099,9 @@ function AdminDisplaySiteStats() {
 		<div class="metricsOverviewBlock">
 		<div class="metricsBlock">
 			<div class="metricsHeader">Website Activity - 24 Hours</div>
-			<? foreach ($hits as $visit => $hit) { ?>
+			<? foreach ($hits as $visit => $hit) { 
+				if ($sessions[$visit] == 0) { continue; }
+				?>
 				<div class="metricsDomain"><?= $visit; ?></div>
 				<!--<div class="metricsLabel">Hits:</div>-->
 				<div class="metricsValue"><?= $hit + 0; ?>/<?= $sessions[$visit]; ?></div>

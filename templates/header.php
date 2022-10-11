@@ -321,8 +321,7 @@ function htmlFooter($meta) {
 			</footer>
 		</div>
 	</body>
-</html>
-	<?
+</html><?
 }
 
 function htmlContent($content) {
