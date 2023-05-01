@@ -4052,10 +4052,12 @@ function AltClosestWord($misspelled,$suggestions) {
 	}
 	if (count($insertMeOnTop) > 0) {
 		$btlfsa_ordered = array_reverse($btlfsa_ordered, true);
-		list($key, $value) = each($insertMeOnTop);
-		unset($btlfsa_ordered[$key]);
-		$btlfsa_ordered[$key] = $value;
-		$btlfsa_ordered = array_reverse($btlfsa_ordered, true);
+		//list($key, $value) = each($insertMeOnTop); //deprec php7.4
+		foreach($insertMeOnTop as $key => $value) {
+			unset($btlfsa_ordered[$key]);
+			$btlfsa_ordered[$key] = $value;
+			$btlfsa_ordered = array_reverse($btlfsa_ordered, true);
+		}
 	}
 	reset($btlfsa_ordered);
 	//echo "<!--"; print_r ($btlfsa_ordered); echo "-->";
