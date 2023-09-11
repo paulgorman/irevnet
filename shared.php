@@ -14,25 +14,36 @@ function Init() {
 	global $pagination;
 	global $videowidth;
 	error_reporting( E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_ERROR | E_WARNING | E_PARSE | E_USER_ERROR | E_USER_WARNING | E_RECOVERABLE_ERROR );
+//	error_reporting(0);
 	date_default_timezone_set('America/Los_Angeles');
 	session_start(); // I want to track people thru the site
-	$_SESSION['last_move'] = $_SESSION['last_activity']; // testing how long page to page
 	if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 3600)) {
 		// last request was more than 60 minates ago (3600 seconds)
 		session_destroy();   // destroy session data in storage
 		session_unset();     // unset $_SESSION variable for the runtime
+	} elseif (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] < 3600)) {
+		// I am a returning visitor within last hour, update per-page timer
+		$_SESSION['last_move'] = $_SESSION['last_activity']; // testing how long page to page
+		$_SESSION['last_activity'] = time(); // update last activity time stamp
+	} else {
+		// I am a brand new visitor
+		$_SESSION['last_activity'] = time(); // update last activity time stamp
+		$_SESSION['last_move'] = time(); // testing how long page to page
 	}
-	$_SESSION['last_activity'] = time(); // update last activity time stamp
 	// lets count how many pages visitor's looked at
 	isset($_SESSION['count']) ? $_SESSION['count']++ : $_SESSION['count'] = 0;
-	$host  = "localhost";
-	$db    = "irevnet";
+	if (!(isset($_SESSION['obfuscate']))) {
+		$_SESSION['obfuscate'] = 0; // set this key to something so no complaints
+	}
 	$dirlocation = "/home/presence/irev.net";	// no trailing slash. // default, overridden in db.php
-	require_once("db.php");
-	$conn = mysqli_connect($host, $user, $pass, $db) or die(mysqli_error());
+	require_once("db.php"); // $host, $user, $pass, $db name, $dirlocation no trailing slash
+	//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+	mysqli_report(MYSQLI_REPORT_OFF);
+	$conn = mysqli_connect($host, $user, $pass, $db, 3306) or die(mysqli_connect_error());
+	//printf("Success... %s\n", mysqli_get_host_info($conn));
 	$pagination = "20";	// number of entries per "page"
 	$videowidth = 600;
-	//debugShow();
+	debugShow();
 }
 
 function Pages() {
@@ -49,12 +60,22 @@ function Pages() {
 
 function RecordHit() {
 	global $conn;
+	if (isset($_SERVER['HTTP_REFERER'])) {
+		$referrer = $_SERVER['HTTP_REFERER'];
+	} else {
+		$referrer = "";
+	}
+	if (isset($_SERVER['REMOTE_HOST'])) {
+		$remote_host = $_SERVER['REMOTE_HOST'];
+	} else {
+		$remote_host = "";
+	}
 	$query = sprintf("INSERT INTO `sitehits` (`hit_datetime`, `hit_ip`, `hit_addr`, `hit_url`, `referrer`, `user_agent`, `sessionid`, `sesscount`) values ('%s','%s','%s','%s','%s','%s', '%s', %s);",
 		mysqli_real_escape_string($conn, DatePHPtoSQL(time())),
 		mysqli_real_escape_string($conn, $_SERVER['REMOTE_ADDR']),
-		mysqli_real_escape_string($conn, $_SERVER['REMOTE_HOST']),
+		mysqli_real_escape_string($conn, $remote_host),
 		mysqli_real_escape_string($conn, $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']),
-		mysqli_real_escape_string($conn, $_SERVER['HTTP_REFERER']),
+		mysqli_real_escape_string($conn, $referrer),
 		mysqli_real_escape_string($conn, $_SERVER['HTTP_USER_AGENT']),
 		mysqli_real_escape_string($conn, session_id()),
 		mysqli_real_escape_string($conn, $_SESSION['count'])
@@ -75,7 +96,7 @@ function DatePHPtoSQL($phpdate) {
 function DebugShow() {
 	echo "<div class='Debug'>";
 	echo "You wanted to look at: ";
-	if (isEmpty($_REQUEST['url'])) {
+	if (isset($_REQUEST['url'])) {
 		printf ("Page: %s<br>\nSpecifically: %s<br>\nCount: %s<br>\nLast Activity:%s seconds<br>\n",
 			$_REQUEST['page'],
 			$_REQUEST['url'],
@@ -473,7 +494,7 @@ function getSampleCategory($oid) {
 	global $conn;
 	// from looking at the sample id, return the category ID or null
 	$cid = NULL;
-	if (strlen(preg_replace("/[^0-9]/","",$_SESSION['category'])) >= 1 ) {
+	if ( (isset($_SESSION['category'])) && (strlen(preg_replace("/[^0-9]/","",$_SESSION['category'])) >= 1 )) {
 		// did the web visitor pass through a category listing page?
 		$sess_cid = preg_replace("/[^0-9]/","",$_SESSION['category']);
 		// get all categories sample listed under
@@ -1005,11 +1026,11 @@ function DisplayVideoPlayer($sampleinfo) {
 	$vidcount = $sampleinfo['media']['vidcount'];
 	if ($vidcount == 1) {
 		?>
-			<div class="sampleVideoIndividual" style="text-align: center; max-width: 540px;"><div class="<?= $sampleinfo['classname']; ?>" id="container<?= $sampleinfo['media']['mid']; ?>">Loading video for <?= ($sampleinfo['use_display_name'])? $sampleinfo['display_name'] : $sampleinfo['name']; ?></div></div>
+			<div class="sampleVideoIndividual" style="text-align: center; max-width: 540px;"><div class="VideoPlayer" id="container<?= $sampleinfo['media']['mid']; ?>">Loading video for <?= ($sampleinfo['use_display_name'])? $sampleinfo['display_name'] : $sampleinfo['name']; ?></div></div>
 		<?
 	} elseif ($vidcount > 1) {
 		?>
-			<div class="col6 sampleVideoIndividual"><div class="<?= $sampleinfo['classname']; ?>" style="text-align: center; position: absolute;" id="container<?= $sampleinfo['media']['mid']; ?>">Loading video for <?= ($sampleinfo['use_display_name'])? $sampleinfo['display_name'] : $sampleinfo['name']; ?></div></div>
+			<div class="col6 sampleVideoIndividual"><div class="VideoPlayer" style="text-align: center; position: absolute;" id="container<?= $sampleinfo['media']['mid']; ?>">Loading video for <?= ($sampleinfo['use_display_name'])? $sampleinfo['display_name'] : $sampleinfo['name']; ?></div></div>
 		<?
 	}
 	?>
@@ -1030,7 +1051,7 @@ function DisplayVideoPlayer($sampleinfo) {
 			'icons': false,
 			'width': '<?= $sampleinfo['media']['widthdisplay']; ?>',
 			'stretching': 'uniform',
-			<?= ($sampleinfo['media']['heightdisplay'])? $sampleinfo['media']['heightdisplay'] : NULL ?>
+			<?= (isset($sampleinfo['media']['heightdisplay']))? $sampleinfo['media']['heightdisplay'] : NULL ?>
 			'aspectratio': '<?= $sampleinfo['media']['aspectratio']; ?>',
 		});
 		jwplayer('container<?= $sampleinfo['media']['mid']; ?>').onPlay(function() {
@@ -3951,7 +3972,7 @@ function ScriptTime($starttime) {
 
 function CurPageURL() {
 	$pageURL = 'http';
-	if ($_SERVER["HTTPS"] == "on") {
+	if (isset($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"]) == "on") {
 		$pageURL .= "s";
 	}
 	$pageURL .= "://";
@@ -3966,7 +3987,7 @@ function CurPageURL() {
 
 function CurServerURL() {
 	$serverURL = "http";
-	if ($_SERVER["HTTPS"] == "on") {
+	if (isset($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"]) == "on") {
 		$serverURL .= "s";
 	}
 	$serverURL .= "://";

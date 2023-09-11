@@ -417,6 +417,7 @@ function AdminsampleListPageBySearchResult($samples,$page) {
 }
 
 function ShowPageNav($pageinfo) {
+	$returnhtml = "";
 	if ($pageinfo['page'] != $pageinfo['first']) {
 		$returnhtml .= "<div class='ListPageItem'><a href='/admin/samples/". $pageinfo['type'] ."/". $pageinfo['first'] ."'>First</a></div>";
 	}

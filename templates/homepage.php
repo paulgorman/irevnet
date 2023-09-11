@@ -153,7 +153,7 @@ function homePageHighlightedGallery($samples) {
 		<?
 			foreach (array_keys($samples) as $key) {
 				?><a class="photo" href="/sample/<?= $samples[$key]['url']; ?>" data-target="_self">
-					<img src="/i/sample/<?= $samples[$key]['filename']; ?>" alt="<?= $samples['name']; ?>"/>
+					<img src="/i/sample/<?= $samples[$key]['filename']; ?>" alt="<?= $samples[$key]['name']; ?>"/>
 					<div class="caption">
 						<div class="main"><?= $samples[$key]['name']; ?></div>
 						<div class="subCaption"><?= $samples[$key]['slug']; ?></div>

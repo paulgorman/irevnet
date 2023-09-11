@@ -65,11 +65,11 @@ function ListCategoryCarousel ($categoryList) {
 							<li data-type="link" data-url="/categories/<?= $categoryList[$key]['url']; ?>" data-target="_self"></li>
 							<li data-thumbnail-path="/i/category/<?= $categoryList[$key]['carousel_id']; ?>"></li>
 							<li data-thumbnail-text="<?= $categoryList[$key]['category']; ?>" data-thumbnail-text-title-offset="35" data-thumbnail-text-offset-top="10" data-thumbnail-text-offset-bottom="7">
-								<p class="largeLabel"><?= $categoryList[$key]['category']; ?></p>
+								<!-- /* I look better without this floating up. */ <p class="largeLabel"><?= $categoryList[$key]['category']; ?></p> -->
 								<p class="smallLabel"><?= $categoryList[$key]['description']; ?></p>
 							</li>
 							<li data-info="">
-								<p class="mediaDescriptionHeader"><?= $categoryList[$key]['catagory']; ?></p>
+								<p class="mediaDescriptionHeader"><?= $categoryList[$key]['category']; ?></p>
 								<p class="mediaDescriptionText"><?= $categoryList[$key]['description']; ?></p>
 							</li>
 						</ul>
@@ -85,6 +85,7 @@ function ListCategoryCarousel ($categoryList) {
 function ListAllCategories($categoryList) {
 	// $url, $category, description, is_highlighted
 	echo "<div class='content'>";
+		$i = 0;
 		foreach ($categoryList as $key => $blah) {
 			$i++;
 			($i % 2 == 0 )? $float="fr" : $float="fl";
