@@ -43,7 +43,7 @@ function Init() {
 	//printf("Success... %s\n", mysqli_get_host_info($conn));
 	$pagination = "20";	// number of entries per "page"
 	$videowidth = 600;
-	debugShow();
+	//debugShow();
 }
 
 function Pages() {
@@ -1085,9 +1085,17 @@ function AdminDisplaySiteStats() {
 	$result = mysqli_query($conn, $query);
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		$visitor = $row['hit_addr'];
-		$hits[$visitor] = $hits[$visitor] + 1;
-		if ($sessions[$visitor] < $row['sesscount']) {
-			$sessions[$visitor] = $row['sesscount'];
+		if (array_key_exists($visitor, $hits)) { 
+			$hits[$visitor] = $hits[$visitor] + 1;
+		} else {
+			$hits[$visitor] = 1;
+		}
+		if (array_key_exists($visitor,$sessions)) {
+			if ($sessions[$visitor] < $row['sesscount']) {
+				$sessions[$visitor] = $row['sesscount'];
+			}
+		} else {
+			$sessions[$visitor] = 0;
 		}
 		arsort($hits);
 	}
@@ -1110,9 +1118,17 @@ function AdminDisplaySiteStats() {
 	$result = mysqli_query($conn,$query);
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		$visitor = $row['hit_addr'];
-		$hits[$visitor] = $hits[$visitor] + 1;
-		if ($sessions[$visitor] < $row['sesscount']) {
-			$sessions[$visitor] = $row['sesscount'];
+		if (array_key_exists($visitor, $hits)) { 
+			$hits[$visitor] = $hits[$visitor] + 1;
+		} else {
+			$hits[$visitor] = 1;
+		}
+		if (array_key_exists($visitor, $sessions)) {
+			if ($sessions[$visitor] < $row['sesscount']) {
+				$sessions[$visitor] = $row['sesscount'];
+			}
+		} else {
+			$sessions[$visitor] = 0;
 		}
 		arsort($hits);
 	}
@@ -1136,9 +1152,17 @@ function AdminDisplaySiteStats() {
 	$result = mysqli_query($conn, $query);
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		$visitor = $row['hit_addr'];
-		$hits[$visitor] = $hits[$visitor] + 1;
-		if ($sessions[$visitor] < $row['sesscount']) {
-			$sessions[$visitor] = $row['sesscount'];
+		if (array_key_exists($visitor, $hits)) { 
+			$hits[$visitor] = $hits[$visitor] + 1;
+		} else {
+			$hits[$visitor] = 1;
+		}
+		if (array_key_exists($visitor,$sessions)) {
+			if ($sessions[$visitor] < $row['sesscount']) {
+				$sessions[$visitor] = $row['sesscount'];
+			}
+		} else {
+			$sessions[$visitor] = 0;
 		}
 		arsort($hits);
 	}
@@ -1159,7 +1183,7 @@ function AdminDisplaySiteStats() {
 function ShowAdminPage() {
 	$adminfunctions = array(
 		"Overview" => "",
-		"samples" => "samples",
+		"Samples" => "samples",
 		"Categories" => "categories_list",
 		"Styles" => "styles_list",
 		"Locations" => "locations_list",
@@ -1171,8 +1195,10 @@ function ShowAdminPage() {
 	AdminHead($_REQUEST['url'],$adminfunctions);
 	AdminNav($_REQUEST['url'],$adminfunctions);
 	if (isEmpty($_REQUEST['url']) || ((string)$_REQUEST['url'] === "web_stats")) {
-		AdminDisplaySiteStats();
+		echo $_REQUEST['url'] . "<br>empty req url - AdminDisplaySiteStats()<br>";
+		//AdminDisplaySiteStats();
 	} else {
+		echo "go go";
 		if ($_REQUEST['url'] == "admin_users") {
 			switch($_REQUEST['function']) {
 				case "add_admin":
@@ -1298,6 +1324,7 @@ function ShowAdminPage() {
 			}
 		}
 		if ($_REQUEST['url'] == "samples") {
+			echo "samplasdf";
 			AdminsamplesButtonBar(); // display that additional nav/button bar
 			switch($_REQUEST['function']) {
 				case "search":
@@ -3898,8 +3925,8 @@ function MakeURL($str, $replace=array(), $delimiter='-') {
 
 function isEmpty($var, $allow_false = false, $allow_ws = false) {
 	// freaking sick of trim, strlen, empty, and isset weirdness
-	// XXX: I put a @ infront of trim here cause I sent arrays thru this and trim() no like.
-	if (!isset($var) || is_null($var) || ($allow_ws == false && @trim($var) == "" && !is_bool($var)) || ($allow_false === false && is_bool($var) && $var === false) || (is_array($var) && empty($var))) {   
+	// XXX: we don't trim anymore, we don't check if $var is an actual array.
+	if (!isset($var) || is_null($var) || is_array($var) || ($allow_false === false && is_bool($var) && $var === false) && !is_array($var)) {
 		return true;
 	} else {
 		return false;
