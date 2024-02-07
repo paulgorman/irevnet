@@ -1195,8 +1195,7 @@ function ShowAdminPage() {
 	AdminHead($_REQUEST['url'],$adminfunctions);
 	AdminNav($_REQUEST['url'],$adminfunctions);
 	if (isEmpty($_REQUEST['url']) || ((string)$_REQUEST['url'] === "web_stats")) {
-		echo $_REQUEST['url'] . "<br>empty req url - AdminDisplaySiteStats()<br>";
-		//AdminDisplaySiteStats();
+		AdminDisplaySiteStats();
 	} else {
 		echo "go go";
 		if ($_REQUEST['url'] == "admin_users") {
@@ -1324,7 +1323,6 @@ function ShowAdminPage() {
 			}
 		}
 		if ($_REQUEST['url'] == "samples") {
-			echo "samplasdf";
 			AdminsamplesButtonBar(); // display that additional nav/button bar
 			switch($_REQUEST['function']) {
 				case "search":
@@ -3926,7 +3924,7 @@ function MakeURL($str, $replace=array(), $delimiter='-') {
 function isEmpty($var, $allow_false = false, $allow_ws = false) {
 	// freaking sick of trim, strlen, empty, and isset weirdness
 	// XXX: we don't trim anymore, we don't check if $var is an actual array.
-	if (!isset($var) || is_null($var) || is_array($var) || ($allow_false === false && is_bool($var) && $var === false) && !is_array($var)) {
+	if (!isset($var) || is_null($var) || is_array($var) || ($allow_false === false && is_bool($var) && $var === false) ) {
 		return true;
 	} else {
 		return false;

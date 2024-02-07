@@ -315,7 +315,7 @@ function htmlFooter($meta) {
 				<p>
 					Designed and <a href="https://github.com/paulgorman/irevnet">Coded</a> by <a href="mailto:paul@irev.net">Paul Gorman</a> &copy;<? echo date("Y"); ?><br>
 					<a href="http://www.mxguarddog.com/">spam filter in the cloud</a><br>
-					<a href="http://www.diamonds2cash.com/sell-diamonds">sell diamonds online</a>
+					<? /* <a href="http://www.diamonds2cash.com/sell-diamonds">sell diamonds online</a> */ ?>
 					<a rel="me" href="https://hachyderm.io/@presence">Mastodon</a>
 
 				</p>
