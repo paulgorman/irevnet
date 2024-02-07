@@ -1197,7 +1197,6 @@ function ShowAdminPage() {
 	if (isEmpty($_REQUEST['url']) || ((string)$_REQUEST['url'] === "web_stats")) {
 		AdminDisplaySiteStats();
 	} else {
-		echo "go go";
 		if ($_REQUEST['url'] == "admin_users") {
 			switch($_REQUEST['function']) {
 				case "add_admin":
@@ -3921,13 +3920,25 @@ function MakeURL($str, $replace=array(), $delimiter='-') {
 	return $clean;
 }
 
-function isEmpty($var, $allow_false = false, $allow_ws = false) {
+function isEmpty($var) {
 	// freaking sick of trim, strlen, empty, and isset weirdness
-	// XXX: we don't trim anymore, we don't check if $var is an actual array.
-	if (!isset($var) || is_null($var) || is_array($var) || ($allow_false === false && is_bool($var) && $var === false) ) {
-		return true;
-	} else {
+	// is this an array?
+	if ( (array)$var === $var) { 
+		// I can typecast myself into an array, so I was an array already, thusly not empty.
 		return false;
+	} else { 
+		// I might be a string?
+		if (!isset($var) || is_null($var) || (is_bool($var) && $var === false) ) {
+			// I'm empty, yay!
+			return true;
+		} else {
+			// there's something in this, but maybe its kinda blank?
+			if (strlen(trim($var)) == 0) { 
+				return true; // I'm empty enough.
+			} else {
+				return false;
+			}
+		}
 	}
 }
 
