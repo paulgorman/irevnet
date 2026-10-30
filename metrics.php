@@ -22,7 +22,7 @@ define('METRICS_MY_IPS', '63.224.44.134');
 define('METRICS_MY_IP_PREFIXES', '192.168.1.');
 // Only these hostnames count as "the website". The wildcard DNS sends every other *.irev.net here
 // (Baidu invents subdomains), so those are tallied separately instead of as visitors.
-define('METRICS_HOSTS', 'irev.net,www.irev.net');
+define('METRICS_HOSTS', 'irev.net,www.irev.net,gallery.irev.net,paul.irev.net,media.irev.net');
 // A "visit" longer than this many pages is a robot that keeps cookies, not a person.
 define('METRICS_MAX_HUMAN_PAGES', 40);
 // User agents containing any of these words are robots (case-insensitive, MariaDB REGEXP).
