@@ -7,3 +7,9 @@ weather
 cgi-bin
 simon
 mic
+.well-known
+.DS_Store
+Thumbs.db
+templates/redactor-old
+*.sql
+*.tgz

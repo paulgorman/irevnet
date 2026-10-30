@@ -5,7 +5,7 @@ This is the new iRev.net website featuring Presence's gallery of stuff
 
 Install
 -------
-* git clone git://github.com/paulgorman/irev.net.git
+* git clone https://github.com/paulgorman/irevnet
 * mkdir -p irev.net/i/artist
 * mkdir irev.net/i/category
 * mkdir irev.net/i/pages
