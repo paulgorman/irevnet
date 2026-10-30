@@ -365,11 +365,11 @@ function AdminsampleListPageByCategory($samples,$page) {
 	<?
 }
 
-function AdminsampleListPageByStyle($samples,$page) {
+function AdminsampleListPageByTag($samples,$page) {
 	?>
 		<div class="AdminCategoryListContainer">
 			<div class="AdminCategoryListHeader">
-				<div class="AdminCategoryListItemDescription">All <?= mysqli_num_rows($samples); ?> samples in the <?= MakeCase(StyleNameFromSID($_REQUEST['sid'])); ?> Style</div>
+				<div class="AdminCategoryListItemDescription">All <?= mysqli_num_rows($samples); ?> samples tagged <?= MakeCase(TagNameFromTID($_REQUEST['tid'])); ?></div>
 			</div>
 			<div class="clear"></div>
 			<? foreach ($samples as $key => $values) { ?>
@@ -486,50 +486,50 @@ function AdminShowLocations($locations) {
 	<?
 }
 
-function AdminShowStyles($styles,$quantity) {
+function AdminShowTags($tags,$quantity) {
 	?>
 		<div class="AdminCategoryListContainer">
 			<div class="AdminCategoryListHeader">
-				<div class="AdminCategoryListItemURL">Styles (<?= $quantity ?>)</div>
+				<div class="AdminCategoryListItemURL">Tags (<?= $quantity ?>)</div>
 			</div>
 			<div class="clear"></div>
-			<? if (isset($styles)) { foreach ($styles as $key => $values) { ?>
+			<? if (isset($tags)) { foreach ($tags as $key => $values) { ?>
 				<div class="AdminCategoryListRow">
-					<form method="POST" action="/admin/styles_list" name="edit<?= $values['sid']; ?>">
-						<div class="AdminCategoryListItemDescription" onclick="document.forms['edit<?= $values['sid']; ?>'].submit(); return false;"><?=$values['name'] ?></div>
-						<div class="AdminCategoryListItemURL" onclick="document.forms['edit<?= $values['sid']; ?>'].submit(); return false;">&nbsp;</div>
-						<div class="AdminCategoryListItemCategory" onclick="document.forms['edit<?= $values['sid']; ?>'].submit(); return false;">&nbsp;</div>
-						<div class="AdminCategoryListItemIcon" onclick="document.forms['edit<?= $values['sid']; ?>'].submit(); return false;">
-							<input type="hidden" name="sid" value="<?= $values['sid']; ?>">
-							<input type="hidden" name="function" value="edit_style">
-							<a href="javascript:;" onclick="document.forms['edit<?= $values['sid']; ?>'].submit(); return false;" class="AdminCategoryEditIcon" title="Edit '<?= $values['name'] ?>' Style"></a>
+					<form method="POST" action="/admin/tags_list" name="edit<?= $values['tid']; ?>">
+						<div class="AdminCategoryListItemDescription" onclick="document.forms['edit<?= $values['tid']; ?>'].submit(); return false;"><?=$values['name'] ?></div>
+						<div class="AdminCategoryListItemURL" onclick="document.forms['edit<?= $values['tid']; ?>'].submit(); return false;">&nbsp;</div>
+						<div class="AdminCategoryListItemCategory" onclick="document.forms['edit<?= $values['tid']; ?>'].submit(); return false;">&nbsp;</div>
+						<div class="AdminCategoryListItemIcon" onclick="document.forms['edit<?= $values['tid']; ?>'].submit(); return false;">
+							<input type="hidden" name="tid" value="<?= $values['tid']; ?>">
+							<input type="hidden" name="function" value="edit_tag">
+							<a href="javascript:;" onclick="document.forms['edit<?= $values['tid']; ?>'].submit(); return false;" class="AdminCategoryEditIcon" title="Edit '<?= $values['name'] ?>' Tag"></a>
 						</div> <!-- class="AdminCategoryListItem" -->
 					</form>
 					<div class="AdminCategoryListItemIcon">
-						<form method="POST" action="/admin/styles_list" name="del<?= $values['sid']; ?>">
-							<input type="hidden" name="sid" value="<?= $values['sid']; ?>">
-							<input type="hidden" name="function" value="del_style">
-							<a href="javascript:;" onclick="document.forms['del<?= $values['sid']; ?>'].submit(); return false;" class="AdminCategoryRemoveIcon" title="Remove '<?= $values['name']; ?>' Style"></a>
+						<form method="POST" action="/admin/tags_list" name="del<?= $values['tid']; ?>">
+							<input type="hidden" name="tid" value="<?= $values['tid']; ?>">
+							<input type="hidden" name="function" value="del_tag">
+							<a href="javascript:;" onclick="document.forms['del<?= $values['tid']; ?>'].submit(); return false;" class="AdminCategoryRemoveIcon" title="Remove '<?= $values['name']; ?>' Tag"></a>
 						</form>
 					</div>
 					<div class="AdminCategoryListItemIcon">
-						<form method="POST" action="/admin/styles_list" name="search<?= $values['sid']; ?>">
-							<input type="hidden" name="sid" value="<?= $values['sid']; ?>">
-							<input type="hidden" name="function" value="search_style">
-							<a href="javascript:;" onclick="document.forms['search<?= $values['sid']; ?>'].submit(); return false;" class="AdminCategorySearchIcon" title="Show all samples in the '<?= $values['name']; ?>' style"></a>
+						<form method="POST" action="/admin/tags_list" name="search<?= $values['tid']; ?>">
+							<input type="hidden" name="tid" value="<?= $values['tid']; ?>">
+							<input type="hidden" name="function" value="search_tag">
+							<a href="javascript:;" onclick="document.forms['search<?= $values['tid']; ?>'].submit(); return false;" class="AdminCategorySearchIcon" title="Show all samples tagged '<?= $values['name']; ?>'"></a>
 						</form>
 					</div>
 				</div>  <!-- class="AdminCategoryListRow" -->
 			<? } } ?>
 		</div> <!-- AdminCategoryListContainer -->
 		<div class="clear"></div>
-		<form method="POST" action="/admin/styles_list" enctype="multipart/form-data">
-			<input type="hidden" name="function" value="add_style">
+		<form method="POST" action="/admin/tags_list" enctype="multipart/form-data">
+			<input type="hidden" name="function" value="add_tag">
 			<div class="AdminCategoryListingAddContainer">
-				<div class="AdminCategoryListingAddHeader">ADD NEW STYLE</div>
+				<div class="AdminCategoryListingAddHeader">ADD NEW TAG</div>
 				<div class="AdminCategoryListingAddItem">Name</div>
 				<div class="AdminCategoryListingAddValue"><input type="text" name="name" size="40"></div>
-				<div class="AdminCategoryListingAddSubmit"><input type="submit" value="Add Style"></div>
+				<div class="AdminCategoryListingAddSubmit"><input type="submit" value="Add Tag"></div>
 				<div class="clear"></div>
 			</div> <!-- class="AdminCategoryListingAddContainer" -->
 		</form>
@@ -873,23 +873,23 @@ function AdminEditLocation($dataarray) {
 	<?
 }
 
-function AdminEditStyle($dataarray) {
+function AdminEditTag($dataarray) {
 	?>
-		<form method="POST" action="/admin/styles_list" enctype="multipart/form-data">
-			<input method="hidden" name="function" value="save_style" style="display:none">
-			<input method="hidden" name="sid" value="<?= $dataarray['sid'] ?>" style="display:none">
+		<form method="POST" action="/admin/tags_list" enctype="multipart/form-data">
+			<input method="hidden" name="function" value="save_tag" style="display:none">
+			<input method="hidden" name="tid" value="<?= $dataarray['tid'] ?>" style="display:none">
 			<div class="AdminCategoryListContainer">
 				<div class="AdminCategoryListingEditHeader">
-					Edit Style Name "<?= $dataarray['name'] ?>"
+					Edit Tag Name "<?= $dataarray['name'] ?>"
 				</div>
 				<div class="clear"></div>
-				<div class="AdminCategoryListingEditItem">Style Name:</div>
+				<div class="AdminCategoryListingEditItem">Tag Name:</div>
 				<div class="AdminCategoryListingAddValue">
 					<input type="text" name="name" size="40" value="<?= $dataarray['name'] ?>">
 				</div>
 				<div class="AdminCategoryListingAddSubmit">
-					<input type="submit" value="Update Style">
-					<input type="button" name="Cancel" value="Cancel" onclick="window.location='/admin/styles_list'">
+					<input type="submit" value="Update Tag">
+					<input type="button" name="Cancel" value="Cancel" onclick="window.location='/admin/tags_list'">
 				</div>
 				<div class="clear"></div>
 			</div> <!-- AdminCategoryListContainer -->
@@ -950,7 +950,7 @@ function AdminsampleFormNew() {
           $.bsmSelect.plugins.compatibility()
         ]
 			});
-      $("#Styles").bsmSelect({
+      $("#Tags").bsmSelect({
         addItemTarget: 'bottom',
         animate: true,
         highlight: true,
@@ -1016,11 +1016,11 @@ function AdminsampleFormNew() {
 				</div>
 				<div class="clear"></div>
 				<div class="AdminCategoryListingAddItem">
-					<label for="Styles">Performance Styles</label>
+					<label for="Tags">Tags</label>
 				</div>
 				<div class="AdminCategoryListingAddDropDown">
-					<select id="Styles" multiple="multiple" name="styles[]" title="Styles" class="sminit">
-						<?= AdminSelectStyles(); ?>
+					<select id="Tags" multiple="multiple" name="tags[]" title="Tags" class="sminit">
+						<?= AdminSelectTags(); ?>
 					</select>
 				</div>
 				<div class="AdminCategoryListingAddItem">
@@ -1108,7 +1108,7 @@ function AdminsampleFormSingle($sampleinfo) {
           $.bsmSelect.plugins.compatibility()
         ]
       });
-      $("#Styles").bsmSelect({
+      $("#Tags").bsmSelect({
         addItemTarget: 'bottom',
         animate: true,
         highlight: true,
@@ -1248,11 +1248,11 @@ function AdminsampleFormSingle($sampleinfo) {
 
 				<div class="clear"></div>
 				<div class="AdminCategoryListingAddItem">
-					<label for="Styles">Performance Styles</label>
+					<label for="Tags">Tags</label>
 				</div>
 				<div class="AdminCategoryListingAddDropDown">
-					<select id="Styles" multiple="multiple" name="styles[]" title="Styles" class="sminit">
-						<?= AdminSelectStyles($sampleinfo['oid']); ?>
+					<select id="Tags" multiple="multiple" name="tags[]" title="Tags" class="sminit">
+						<?= AdminSelectTags($sampleinfo['oid']); ?>
 					</select>
 				</div>
 				<div class="AdminCategoryListingAddItem">

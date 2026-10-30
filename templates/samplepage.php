@@ -163,14 +163,14 @@ function htmlsamplePageGalleryJS() {
 	<?
 }
 
-function htmlStylesTags($samples) {
+function htmlTags($samples) {
 	$colors = array("green","blue","turkese","orange","");
 	$i = 0;
 	?>
-		<div class="sampleStyles">
+		<div class="sampleTags">
 	<?
 	foreach (array_keys($samples) as $oid) {
-		foreach (array_keys($samples[$oid]['styles']) as $key) {
+		foreach (array_keys($samples[$oid]['tags']) as $key) {
 			if ($i > 8) { continue; }
 			$color = $colors[$i];
 			$i++;
@@ -178,7 +178,7 @@ function htmlStylesTags($samples) {
 				$i = 0;
 			}
 			?>
-				<p class="btn big <?= $color; ?>"><?= $samples[$oid]['styles'][$key]; ?></p>
+				<p class="btn big <?= $color; ?>"><?= $samples[$oid]['tags'][$key]; ?></p>
 			<?
 		}
 	}

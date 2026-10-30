@@ -203,7 +203,7 @@ function SamplePage() {
 			htmlBreadcrumb($meta);
 			htmlSamplePageTop($sampleinfo);
 			htmlBodyStart();
-			htmlStylesTags($sampleinfo);
+			htmlTags($sampleinfo);
 			//htmlSamplePageBottom($sampleinfo);
 			htmlSamplePageBottomGallery($sampleinfo);
 			htmlSamplePageGalleryJS();
@@ -219,7 +219,7 @@ function SamplePage() {
 
 function getSampleMetaTags($sampleinfo) {
 	$meta = array();
-	// meta keywords are name, categories, styles, locations
+	// meta keywords are name, categories, tags, locations
 	$meta['keywords'] = "iRev.net, iRev, Inner Revolution Networks, ";
 	foreach (array_keys($sampleinfo) as $key) {
 		$meta['keywords'] .= $sampleinfo[$key]['name'] . ", ";
@@ -228,8 +228,8 @@ function getSampleMetaTags($sampleinfo) {
 				$meta['keywords'] .= $sampleinfo[$key]['categories'][$subkey] . ", ";
 			}
 		}
-		foreach (array_keys($sampleinfo[$key]['styles']) as $subkey) {
-			$meta['keywords'] .= $sampleinfo[$key]['styles'][$subkey] . ", ";
+		foreach (array_keys($sampleinfo[$key]['tags']) as $subkey) {
+			$meta['keywords'] .= $sampleinfo[$key]['tags'][$subkey] . ", ";
 		}
 		foreach (array_keys($sampleinfo[$key]['locations']) as $subkey) {
 			$meta['keywords'] .= "'" . $sampleinfo[$key]['locations'][$subkey] . "', ";
@@ -243,8 +243,8 @@ function getSampleMetaTags($sampleinfo) {
 		$meta['description'] .= " - ";
 		$meta['description'] .= $sampleinfo[$key]['slug'];
 		$meta['description'] .= " (";
-		foreach (array_keys($sampleinfo[$key]['styles']) as $subkey) {
-			$meta['description'] .= $sampleinfo[$key]['styles'][$subkey] . ", ";
+		foreach (array_keys($sampleinfo[$key]['tags']) as $subkey) {
+			$meta['description'] .= $sampleinfo[$key]['tags'][$subkey] . ", ";
 		}
 		$meta['description'] = substr($meta['description'], 0, -2) . ")";
 		$meta['description'] .= " / ";
@@ -386,7 +386,7 @@ function getSampleInfoFromURL($url) {
 		$oid = key($samplenames);
 		// has the user come in via a category page listing?
 		$samplenames[key($samplenames)]['cid'] = getSampleCategory($oid);
-		// Get other categories, styles, and locations
+		// Get other categories, tags, and locations
 		$query = sprintf(
 			"SELECT `categories`.`cid`, `categories`.`category` FROM `categories`
 			 LEFT OUTER JOIN `samplecategories` ON `samplecategories`.`cid` = `categories`.`cid`
@@ -398,14 +398,14 @@ function getSampleInfoFromURL($url) {
 			$samplenames[$oid]['categories'][$row['cid']] = $row['category'];
 		}
 		$query = sprintf(
-			"SELECT `styles`.`sid`, `styles`.`name` FROM `styles`
-			 LEFT OUTER JOIN `samplestyles` ON `samplestyles`.`sid` = `styles`.`sid`
-			 WHERE `samplestyles`.`oid` = '%s'",
+			"SELECT `tags`.`tid`, `tags`.`name` FROM `tags`
+			 LEFT OUTER JOIN `sampletags` ON `sampletags`.`tid` = `tags`.`tid`
+			 WHERE `sampletags`.`oid` = '%s'",
 			mysqli_real_escape_string($conn,$oid)
 		);
 		$result = mysqli_query($conn,$query);
 		while ($row = mysqli_fetch_assoc($result)) {
-			$samplenames[$oid]['styles'][$row['sid']] = $row['name'];
+			$samplenames[$oid]['tags'][$row['tid']] = $row['name'];
 		}
 		$query = sprintf(
 			"SELECT `locations`.`lid`, `locations`.`city`, `locations`.`state` FROM `locations`
@@ -1194,7 +1194,7 @@ function ShowAdminPage() {
 		"Overview" => "",
 		"Samples" => "samples",
 		"Categories" => "categories_list",
-		"Styles" => "styles_list",
+		"Tags" => "tags_list",
 		"Locations" => "locations_list",
 		"Pages" => "pages",
 		"Admins" => "admin_users",
@@ -1264,31 +1264,31 @@ function ShowAdminPage() {
 					AdminEditCategories();
 			}
 		}
-		if ($_REQUEST['url'] == "styles_list") {
+		if ($_REQUEST['url'] == "tags_list") {
 			switch($_REQUEST['function']) {
-				case "add_style":
-					AdminSaveNewStyle();
-					AdminListStyles();
+				case "add_tag":
+					AdminSaveNewTag();
+					AdminListTags();
 					break;
-				case "del_style":
-					AdminDeleteStyle($_REQUEST['sid']);
+				case "del_tag":
+					AdminDeleteTag($_REQUEST['tid']);
 					break;
-				case "del_style_for_reals":
-					AdminDeleteStyleGo($_REQUEST['targetcategoryurl']);
-					AdminListStyles();
+				case "del_tag_for_reals":
+					AdminDeleteTagGo($_REQUEST['targetcategoryurl']);
+					AdminListTags();
 					break;
-				case "edit_style":
-					AdminEditSingleStyle($_REQUEST['sid']);
+				case "edit_tag":
+					AdminEditSingleTag($_REQUEST['tid']);
 					break;
-				case "save_style":
-					AdminSaveSingleStyle();
-					AdminListStyles();
+				case "save_tag":
+					AdminSaveSingleTag();
+					AdminListTags();
 					break;
-				case "search_style":
-					AdminListsampleByStyle();
+				case "search_tag":
+					AdminListsampleByTag();
 					break;
 				default:
-					AdminListStyles();
+					AdminListTags();
 			}
 		}
 		if ($_REQUEST['url'] == "locations_list") {
@@ -1619,7 +1619,7 @@ function GathersampleInfo($oid) {
 		}
 	}
 	mysqli_free_result($result);
-	// AdminSelectCategories($oid) AdminSelectStyles($oid) AdminSelectLocations($oid)
+	// AdminSelectCategories($oid) AdminSelectTags($oid) AdminSelectLocations($oid)
 	// lemme have hash of media
 	$query = sprintf("SELECT `cid` FROM `samplecategories` WHERE `oid` = %s", mysqli_real_escape_string($conn,$oid));
 	$result = mysqli_query($conn,$query);
@@ -1642,11 +1642,11 @@ function GathersampleInfo($oid) {
 		$sampleinfo['locations'][$row['lid']] = $row['lid'];
 	}
 	mysqli_free_result($result);
-	$query = sprintf("SELECT `sid` FROM `samplestyles` WHERE `oid` = %s", mysqli_real_escape_string($conn,$oid));
+	$query = sprintf("SELECT `tid` FROM `sampletags` WHERE `oid` = %s", mysqli_real_escape_string($conn,$oid));
 
 	$result = mysqli_query($conn,$query);
 	while ($row = mysqli_fetch_assoc($result)) {
-		$sampleinfo['styles'][$row['sid']] = $row['sid'];
+		$sampleinfo['tags'][$row['tid']] = $row['tid'];
 	}
 	mysqli_free_result($result);
 	$query = sprintf(
@@ -1846,19 +1846,19 @@ function AdminSampleSaveSingle() {
 		}
 	}
 	$samplesave['samplesubcategories'] = $subcategories;
-	// styles
-	if (isset($_REQUEST['styles'])) {
-		$styles = array();
-		foreach ($_REQUEST['styles'] as $key => $value) {
-			$styles[$key] = preg_replace("/[^0-9]/","",$value);
+	// tags
+	if (isset($_REQUEST['tags'])) {
+		$tags = array();
+		foreach ($_REQUEST['tags'] as $key => $value) {
+			$tags[$key] = preg_replace("/[^0-9]/","",$value);
 		}
-		if (isEmpty($sampleinfo['styles'])) {
-			$samplesave['samplestyles'] = $styles;	// styles have been updated
-		} else if (array_diff($styles, $sampleinfo['styles']) || array_diff($sampleinfo['styles'], $styles)) {
-			$samplesave['samplestyles'] = $styles;	// styles have been updated
+		if (isEmpty($sampleinfo['tags'])) {
+			$samplesave['sampletags'] = $tags;	// tags have been updated
+		} else if (array_diff($tags, $sampleinfo['tags']) || array_diff($sampleinfo['tags'], $tags)) {
+			$samplesave['sampletags'] = $tags;	// tags have been updated
 		}
 	} else {
-		$errors[] = "Please select one or more styles of entertainment this sample performs.";
+		$errors[] = "Please pick one or more tags for this sample.";
 	}
 	// locations
 	if (isset($_REQUEST['locations'])) {
@@ -1867,7 +1867,7 @@ function AdminSampleSaveSingle() {
 			$locations[$key] = preg_replace("/[^0-9]/","",$value);
 		}
 		if (array_diff($locations, $sampleinfo['locations']) || array_diff($sampleinfo['locations'], $locations)) {
-			$samplesave['samplelocations'] = $locations;	// styles have been updated
+			$samplesave['samplelocations'] = $locations;	// locations have been updated
 		}
 	} else {
 		$errors[] = "Please select one or more cities that this sample is local to.";
@@ -1875,7 +1875,7 @@ function AdminSampleSaveSingle() {
 	if (!isset($errors)) {
 		if (count($samplesave) > 1) { // more than just the oid...
 			foreach ($samplesave as $field => $value) {
-				if (preg_match("/(oid|samplecategories|samplesubcategories|samplestyles|samplelocations)/",$field)) {
+				if (preg_match("/(oid|samplecategories|samplesubcategories|sampletags|samplelocations)/",$field)) {
 					continue;
 				} else {
 					$query = sprintf("UPDATE `samples` SET `%s` = '%s' WHERE `oid` = %s",
@@ -1897,7 +1897,7 @@ function AdminSampleSaveSingle() {
 				$errors[] = "<B>Did not update sample information!</B> Database Failure: ".mysqli_error($conn);
 			}
 		}
-		foreach (array("samplecategories" => "cid","samplestyles" => "sid","samplelocations" => "lid", "samplesubcategories" => "subid") as $table => $column) {
+		foreach (array("samplecategories" => "cid","sampletags" => "tid","samplelocations" => "lid", "samplesubcategories" => "subid") as $table => $column) {
 			if ( is_countable($samplesave[$table]) || ($table == "samplesubcategories") ){
 				// wipe out old data
 				$query = sprintf("DELETE FROM `%s` WHERE `oid` =  '%s'", 
@@ -1906,7 +1906,7 @@ function AdminSampleSaveSingle() {
 				);
 				mysqli_query($conn,$query);
 				// pump in new data
-				foreach($samplesave[$table] as $id) { // individual cid, sid, or lid items that we're saving
+				foreach($samplesave[$table] as $id) { // individual cid, tid, subid, or lid items that we're saving
 					$query = sprintf("INSERT INTO `%s` (`%s`,`oid`) VALUES (%s,%s)",
 						mysqli_real_escape_string($conn, $table),
 						mysqli_real_escape_string($conn, $column),
@@ -1917,7 +1917,7 @@ function AdminSampleSaveSingle() {
 						$errors[] = "Error saving category $cid for $oid!" .mysqli_error($conn);
 					}
 				}
-			}// else no category/style/locaiton changes
+			}// else no category/tag/location changes
 		}
 		// Save Uploaded Files
 		$filecount = AdminsampleSaveMedia($oid);
@@ -2165,7 +2165,7 @@ function FigurePageNav($type,$page=1) {
 }
 
 function AdminsampleSaveNew() {
-	// save sample info, locations, styles, categories.
+	// save sample info, locations, tags, categories.
 	// then go to AdminsampleSaveMedia() for the media processing
 	global $conn;
 	(isEmpty($_REQUEST['name']))? $errors[] = "Please enter the sample or act name." : $name = htmlspecialchars(makeCase(convert_smart_quotes(trim($_REQUEST['name']))));
@@ -2193,13 +2193,13 @@ function AdminsampleSaveNew() {
 	} else {
 		$errors[] = "Please select one or more categories for this sample.";
 	}
-	if (isset($_REQUEST['styles'])) {
-		$styles = array();
-		foreach ($_REQUEST['styles'] as $key => $value) {
-			$styles[$key] = preg_replace("/[^0-9]/","",$value);
+	if (isset($_REQUEST['tags'])) {
+		$tags = array();
+		foreach ($_REQUEST['tags'] as $key => $value) {
+			$tags[$key] = preg_replace("/[^0-9]/","",$value);
 		}
 	} else {
-		$errors[] = "Please select one or more styles of entertainment this sample performs.";
+		$errors[] = "Please pick one or more tags for this sample.";
 	}
 	if (isset($_REQUEST['locations'])) {
 		$locations = array();
@@ -2247,13 +2247,13 @@ function AdminsampleSaveNew() {
 					$errors[] = "Error saving category $cid for $oid!" .mysqli_error($conn);
 				}
 			}
-			foreach($styles as $sid) {
-				$query = sprintf("INSERT INTO `samplestyles` (`sid`,`oid`) VALUES (%s,%s)",
-					mysqli_real_escape_string($conn, $sid),
+			foreach($tags as $tid) {
+				$query = sprintf("INSERT INTO `sampletags` (`tid`,`oid`) VALUES (%s,%s)",
+					mysqli_real_escape_string($conn, $tid),
 					mysqli_real_escape_string($conn, $oid)
 				);
 				if (mysqli_query($conn,$query) === FALSE) {
-					$errors[] = "Error saving style $sid for $oid!" .mysqli_error($conn);
+					$errors[] = "Error saving tag $tid for $oid!" .mysqli_error($conn);
 				}
 			}
 			foreach($locations as $lid) {
@@ -2483,17 +2483,17 @@ function AdminListsamplesByCategory() {
 	mysqli_free_result($result);
 }
 
-function AdminListsampleByStyle() {
+function AdminListsampleByTag() {
 	global $conn;
-	// wtf are all the oid's associated with the one sid?
+	// wtf are all the oid's associated with the one tid?
 	$query = sprintf(
-		"SELECT * FROM `samples` LEFT OUTER JOIN `samplestyles` ON `samples`.`oid` = `samplestyles`.`oid` WHERE `samplestyles`.`sid` = %s ORDER BY `samples`.`name`",
-		mysqli_real_escape_string($conn,preg_replace("/[^0-9]/","",$_REQUEST['sid']))
+		"SELECT * FROM `samples` LEFT OUTER JOIN `sampletags` ON `samples`.`oid` = `sampletags`.`oid` WHERE `sampletags`.`tid` = %s ORDER BY `samples`.`name`",
+		mysqli_real_escape_string($conn,preg_replace("/[^0-9]/","",$_REQUEST['tid']))
 	);
 	$result = mysqli_query($conn,$query);
 	$row = mysqli_fetch_assoc($result);
 	// XXX: no pagination, just a long listing
-	AdminsampleListPageByStyle($result,$page);
+	AdminsampleListPageByTag($result,$page);
 	mysqli_free_result($result);
 }
 
@@ -2573,7 +2573,7 @@ function AdminSaveNewLocation() {
 
 function AdminDeleteLocation($lid) {
 	global $conn;
-	$sid = preg_replace("/[^0-9]/","",$lid); // input sanitization -- only numbers
+	$lid = preg_replace("/[^0-9]/","",$lid); // input sanitization -- only numbers
 	// find all samples using this location in `samplelocations` and clean 'em up
 	$query = sprintf("DELETE FROM `samplelocations` WHERE `lid` = '%s'",
 		mysqli_real_escape_string($conn,$lid)
@@ -2591,21 +2591,21 @@ function AdminDeleteLocation($lid) {
 	}
 }
 
-function AdminListStyles() {
+function AdminListTags() {
 	global $conn;
-	$query = "SELECT `sid`, `name` FROM `styles`";
+	$query = "SELECT `tid`, `name` FROM `tags`";
 	$result = mysqli_query($conn,$query);
 	$categorieslist = array();
 	while ($row = mysqli_fetch_assoc($result)) {
-		$styles[] = array(
-			"sid" => $row['sid'],
+		$tags[] = array(
+			"tid" => $row['tid'],
 			"name" => $row['name']
 		);
 	}
 	mysqli_free_result($result);
-	aasort($styles,"name");
-	$quantity = count($styles);
-	AdminShowStyles($styles,$quantity);
+	aasort($tags,"name");
+	$quantity = count($tags);
+	AdminShowTags($tags,$quantity);
 }
 
 function AdminSaveSingleLocation() {
@@ -2631,86 +2631,86 @@ function AdminSaveSingleLocation() {
 	}
 }
 
-function AdminSaveSingleStyle() {
-	// save an existing style that was just edited
+function AdminSaveSingleTag() {
+	// save an existing tag that was just edited
 	global $conn;
-	$sid = preg_replace("/[^0-9]/","",$_REQUEST['sid']); // input sanitization -- only numbers
+	$tid = preg_replace("/[^0-9]/","",$_REQUEST['tid']); // input sanitization -- only numbers
 	$name = htmlspecialchars(ucwords(trim($_REQUEST['name'])));
 	if (isEmpty($name)) {
-		echo "<div class='AdminError'>Please fill in the style's Name.</div>";
+		echo "<div class='AdminError'>Please fill in the tag's name.</div>";
 	} else {
-		$sid = preg_replace("/\[^0-9]/","",trim($_REQUEST['sid']));
-		$query = sprintf("UPDATE `styles` SET `name` = '%s' WHERE `sid` = '%s'",
+		$tid = preg_replace("/[^0-9]/","",trim($_REQUEST['tid']));
+		$query = sprintf("UPDATE `tags` SET `name` = '%s' WHERE `tid` = '%s'",
 			mysqli_real_escape_string($conn,$name),
-			mysqli_real_escape_string($conn,$sid)
+			mysqli_real_escape_string($conn,$tid)
 		);
 		if (mysqli_query($conn,$query) === TRUE) {
-			echo "<div class='AdminSuccess'>Style Entry <B>$name</B> [$sid] Successfully Updated.</div>";
+			echo "<div class='AdminSuccess'>Tag Entry <B>$name</B> [$tid] Successfully Updated.</div>";
 		} else {
-			echo "<div class='AdminError'>Style Entry <B>$name</B> [$sid] Failed to Update!<br>". mysqli_error($conn) ."</div>";
+			echo "<div class='AdminError'>Tag Entry <B>$name</B> [$tid] Failed to Update!<br>". mysqli_error($conn) ."</div>";
 		}
 	}
 }
 
-function AdminDeleteStyle($targetcategoryurl) {
+function AdminDeleteTag($targetcategoryurl) {
 	global $conn;
 	$query = sprintf(
-		"SELECT `name` FROM `styles` WHERE `sid` = %s",
-		mysqli_real_escape_string($conn,preg_replace("/[^0-9]/","",$_REQUEST['sid']))
+		"SELECT `name` FROM `tags` WHERE `tid` = %s",
+		mysqli_real_escape_string($conn,preg_replace("/[^0-9]/","",$_REQUEST['tid']))
 	);
 	$result = mysqli_query($conn,$query);
 	$row = mysqli_fetch_assoc($result);
-	$nextfunction = "del_style_for_reals";
-	$url = "styles_list";
+	$nextfunction = "del_tag_for_reals";
+	$url = "tags_list";
 	AdminShowDeleteConfirmation($targetcategoryurl,$row['name'],$url,$url,$nextfunction);  
 }
 
-function AdminDeleteStyleGo($sid) {
+function AdminDeleteTagGo($tid) {
 	global $conn;
-	$sid = preg_replace("/[^0-9]/","",$sid); // input sanitization -- only numbers
+	$tid = preg_replace("/[^0-9]/","",$tid); // input sanitization -- only numbers
 	// find all samples using this category in `samplecategories` and clean 'em up
-	$query = sprintf("DELETE FROM `samplestyles` WHERE `sid` = '%s'",
-		mysqli_real_escape_string($conn,$sid)
+	$query = sprintf("DELETE FROM `sampletags` WHERE `tid` = '%s'",
+		mysqli_real_escape_string($conn,$tid)
 	);
 	if (mysqli_query($conn,$query) === FALSE) {
-		echo "<div class='AdminError'>Whoa, couldn't delete '$sid' from samplestyles. ". mysqli_error($conn) ."</div>";
+		echo "<div class='AdminError'>Whoa, couldn't delete '$tid' from sampletags. ". mysqli_error($conn) ."</div>";
 	}
-	// delete the style from `styles`
-	$query = sprintf("DELETE FROM `styles` WHERE `sid` = '%s'",
-		mysqli_real_escape_string($conn,$sid)
+	// delete the tag from `tags`
+	$query = sprintf("DELETE FROM `tags` WHERE `tid` = '%s'",
+		mysqli_real_escape_string($conn,$tid)
 	);
 	if (mysqli_query($conn,$query) === TRUE) {
-		echo "<div class='AdminSuccess'>Style removed.</div>";
+		echo "<div class='AdminSuccess'>Tag removed.</div>";
 	} else {
-		echo "<div class='AdminError'>Hmm, couldn't delete '$sid' from categories.". mysqli_error($conn) ."</div>";
+		echo "<div class='AdminError'>Hmm, couldn't delete '$tid' from tags.". mysqli_error($conn) ."</div>";
 	}
 }
 
-function AdminEditSingleStyle($sid) {
+function AdminEditSingleTag($tid) {
 	global $conn;
-	$query = sprintf("SELECT `sid`,`name` FROM `styles` WHERE `sid` = '%s'",
-		mysqli_real_escape_string($conn,$sid)
+	$query = sprintf("SELECT `tid`,`name` FROM `tags` WHERE `tid` = '%s'",
+		mysqli_real_escape_string($conn,$tid)
 	);
 	$result = mysqli_query($conn,$query);
 	$row = mysqli_fetch_assoc($result);
-	AdminEditStyle($row);
+	AdminEditTag($row);
 	mysqli_free_result($result);
 }
 
-function AdminSaveNewStyle() {
-	// save a NEW style
+function AdminSaveNewTag() {
+	// save a NEW tag
 	global $conn;
 	if (isEmpty($_REQUEST['name'])) {
-		echo "<div class='AdminError'>Please fill in the style's name.</div>";
+		echo "<div class='AdminError'>Please fill in the tag's name.</div>";
 	} else {
 		$name = htmlspecialchars(ucwords(trim($_REQUEST['name'])));
-		$query = sprintf("INSERT INTO `styles` (`name`) VALUES ('%s')",
+		$query = sprintf("INSERT INTO `tags` (`name`) VALUES ('%s')",
 			mysqli_real_escape_string($conn,$name)
 		); // I'm trusting that MySQL's UNIQUE will prevent duplicates
 		if (mysqli_query($conn,$query) === TRUE) {
-			echo "<div class='AdminSuccess'>Style Entry <B>$name</B> Successfully Added.</div>";
+			echo "<div class='AdminSuccess'>Tag Entry <B>$name</B> Successfully Added.</div>";
 		} else {
-			echo "<div class='AdminError'>Style Entry <B>$name</B> Failed to Save!<br>". mysqli_error($conn) ."</div>";
+			echo "<div class='AdminError'>Tag Entry <B>$name</B> Failed to Save!<br>". mysqli_error($conn) ."</div>";
 		}
 	}
 }
@@ -2753,7 +2753,7 @@ function AdminSaveSingleCategory($cid) {
 	if ( (isEmpty($_REQUEST['form_url'])) || (isEmpty($_REQUEST['form_category'])) || (isEmpty($_REQUEST['form_description'])) ) {
 		echo "<div class='AdminError'>Please fill in all three Category fields</div>";
 	} else {
-		$cid = preg_replace("/\[^0-9]/","",trim($cid));
+		$cid = preg_replace("/[^0-9]/","",trim($cid));
 		$url = MakeURL(strip_tags(trim($_REQUEST['form_url'])));
 		$category = htmlspecialchars(trim($_REQUEST['form_category']));
 		if (strlen($_REQUEST['published'])) {
@@ -2831,7 +2831,7 @@ function AdminSaveSingleSubCategory($subid) {
 	if ( (isEmpty($_REQUEST['form_url'])) || (isEmpty($_REQUEST['form_subcategory'])) || (isEmpty($_REQUEST['form_description'])) ) {
 		echo "<div class='AdminError'>Please fill in all three Category fields</div>";
 	} else {
-		$subid = preg_replace("/\[^0-9]/","",trim($subid));
+		$subid = preg_replace("/[^0-9]/","",trim($subid));
 		$url = MakeURL(strtolower(strip_tags(trim($_REQUEST['form_url']))));
 		$subcategory = htmlspecialchars(trim($_REQUEST['form_subcategory']));
 		if ($filename) {
@@ -2895,7 +2895,7 @@ function AdminsampleDeleteGo($oid) {
 		}
 	}
 	// delete from database tables
-	$tables = array("samplestyles","samplecategories","samplelocations","samplesubcategories","media","samples");
+	$tables = array("sampletags","samplecategories","samplelocations","samplesubcategories","media","samples");
 	$error = 0;
 	foreach ($tables as $table) {
 		$query = "DELETE FROM `$table` WHERE `oid` = $oid";
@@ -3175,12 +3175,12 @@ function GetCatUrlFromCID($cid) {
 	return ($row['url']);
 }
 
-function StyleNameFromSID($sid) {
-	// simple turn styleID into name
+function TagNameFromTID($tid) {
+	// simple turn tagID into name
 	global $conn;
 	$query = sprintf(
-		"SELECT `name` FROM `styles` WHERE `sid` = %s",
-		mysqli_real_escape_string($conn,preg_replace("/[^0-9]/","",$sid))
+		"SELECT `name` FROM `tags` WHERE `tid` = %s",
+		mysqli_real_escape_string($conn,preg_replace("/[^0-9]/","",$tid))
 	);
 	$result = mysqli_query($conn,$query);
 	$row = mysqli_fetch_assoc($result);
@@ -3188,39 +3188,39 @@ function StyleNameFromSID($sid) {
 	return($row['name']);
 }
 
-function AdminSelectStyles($oid = NULL) {
+function AdminSelectTags($oid = NULL) {
 	// for adding or editing an sample // I'm totally duplicating code // please review AdminSelectCategories() above for notes
 	global $conn;
-	$styleslist = array();
-	$samplestyles = array();
-	$query = "SELECT * FROM `styles` ORDER BY `name`";
+	$tagslist = array();
+	$sampletags = array();
+	$query = "SELECT * FROM `tags` ORDER BY `name`";
 	$result = mysqli_query($conn,$query);
 	while ($row = mysqli_fetch_assoc($result)) {
-		$styleslist[$row['sid']] = $row['name'];
+		$tagslist[$row['tid']] = $row['name'];
 	}
 	mysqli_free_result($result);
 	if ($oid) {
-		$query = sprintf("SELECT `sid` FROM `samplestyles` WHERE `oid` = %s",
+		$query = sprintf("SELECT `tid` FROM `sampletags` WHERE `oid` = %s",
 			mysqli_real_escape_string($conn,$oid)
 		);
 		$result = mysqli_query($conn,$query);
 		while ($row = mysqli_fetch_assoc($result)) {
-			$samplestyles[$row['sid']] = TRUE;
+			$sampletags[$row['tid']] = TRUE;
 		}
 	}
 	$string = "";
-	foreach($styleslist as $sid => $name) {
+	foreach($tagslist as $tid => $name) {
 		$s = 0;
-		if (!empty($samplestyles[$sid])) {
+		if (!empty($sampletags[$tid])) {
 			$s++;
 		}
-		if ((($_REQUEST['formpage'] ?? NULL) == 1) && (is_countable($_REQUEST['styles'] ?? NULL))) {
-			if (strlen(array_search($sid,$_REQUEST['styles'])) > 0) {
+		if ((($_REQUEST['formpage'] ?? NULL) == 1) && (is_countable($_REQUEST['tags'] ?? NULL))) {
+			if (strlen(array_search($tid,$_REQUEST['tags'])) > 0) {
 				$s++;
 			}
 		}
 		$string .= sprintf("<option value='%s'%s>%s</option>",
-			$sid,
+			$tid,
 			($s > 0)? ' selected' : '',
 			$name
 		);

@@ -4,7 +4,7 @@
 
 -- DANGER!!! XXX --------------
 -- DROP ALL TABLES FOR A FRESH START HERE 
--- DROP TABLE IF EXISTS samples, samplecategories, samplesubcategories, samplelocations, locations, categories, media, sitehits, samplestyles, styles, admins, pages;
+-- DROP TABLE IF EXISTS samples, samplecategories, samplesubcategories, samplelocations, locations, categories, media, sitehits, sampletags, tags, admins, pages;
 -- DANGER!!! XXX --------------
 
 CREATE TABLE `irevnet`.`samples` (
@@ -94,15 +94,15 @@ CREATE TABLE `irevnet`.`sitehits` (
 	INDEX(`hit_datetime`,`hit_ip`,`hit_url`)
 ) ENGINE=InnoDB;
 
-CREATE TABLE `irevnet`.`samplestyles` (
+CREATE TABLE `irevnet`.`sampletags` (
 	`oid` INT NOT NULL,
-	`sid` INT NOT NULL,
+	`tid` INT NOT NULL,
 	INDEX(`oid`),
-	INDEX(`sid`)
+	INDEX(`tid`)
 ) ENGINE=InnoDB;
 
-CREATE TABLE `irevnet`.`styles` (
-	`sid` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+CREATE TABLE `irevnet`.`tags` (
+	`tid` INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	`name` varchar(40) NOT NULL UNIQUE,
 	INDEX(`name`)
 ) ENGINE=InnoDB;
