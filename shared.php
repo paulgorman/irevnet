@@ -39,7 +39,7 @@ function Init() {
 	require_once("db.php"); // $host, $user, $pass, $db name, $dirlocation no trailing slash
 	//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 	mysqli_report(MYSQLI_REPORT_OFF);
-	$conn = mysqli_connect($host, $user, $pass, $db, 3306) or die(mysqli_connect_error());
+	$conn = mysqli_connect($host, $user, $pass, $db, 3306) or die("iRev Offline: " . mysqli_connect_error());
 	//printf("Success... %s\n", mysqli_get_host_info($conn));
 	$pagination = "20";	// number of entries per "page"
 	$videowidth = 600;
@@ -923,7 +923,8 @@ function gatherNavData() {
 		$navdata[$i][$j]['name'] = $categoryData['category'];
 		$navdata[$i][$j]['description'] = $categoryData['description'];
 		$navdata[$i][$j]['url'] = "/category/" . $categoryData['url'];
-		$samples = GetSamplesInCategory($categoryData['cid']);
+		// XXX: Why did I have this line here, when I do it again below? 
+		// $samples = GetSamplesInCategory($categoryData['cid']);
 		$j++;
 		// sub2 subcategories
 		foreach (array_keys($subcategories) as $key) {
@@ -2358,7 +2359,7 @@ function MediaInfo($fileid,$purpose) {
 		$mediainfo['vidlength'] = 0;
 	} else if (preg_match("/mp4/",$fileid)) {
 		/* no ffmpeg PHP library dependancies anymore, since php-ffmpeg is locked to php5 */
-		exec("/usr/local/bin/ffprobe -i m/$fileid -v quiet -print_format json -show_format -show_streams -hide_banner", $ffresult);
+		exec("/bin/ffprobe -i m/$fileid -v quiet -print_format json -show_format -show_streams -hide_banner", $ffresult);
 		$ffresult = implode("",$ffresult);
 		$ffinfo = json_decode($ffresult, TRUE);
 		$mediainfo['vidlength'] = ceil($ffinfo['format']['duration']);
@@ -3361,7 +3362,7 @@ function ResizeImage($fileid,$purpose) {
 		imagealphablending($origimage, true);
 		imagesavealpha($origimage, true);
 	}
-	if ($origimage) {
+	if (isset($origimage)) {
 		if (preg_match("/category/",$purpose)) {
 			$width = 728;
 			$height = 90;
@@ -3396,7 +3397,7 @@ function ResizeImage($fileid,$purpose) {
 	if (preg_match("/\.mp4/",$fileid)) {
 		// create a thumbnail
 		// XXXXXX
-		exec("/usr/local/bin/ffprobe -i m/$fileid -v quiet -print_format json -show_format -show_streams -hide_banner", $ffresult);
+		exec("/bin/ffprobe -i m/$fileid -v quiet -print_format json -show_format -show_streams -hide_banner", $ffresult);
 		$ffresult = implode("",$ffresult);
 		$ffinfo = json_decode($ffresult, TRUE);
 		$vidlength = ceil($ffinfo['format']['duration']);
@@ -3406,7 +3407,7 @@ function ResizeImage($fileid,$purpose) {
 			$thumbnailname = substr($fileid,0,-4) . "-$i.jpg";
 			$frame = framesToTC(ceil($totalframes*($i * "0.2")), 30); // make four thumbnails every 200~ish frames, assuming 30 fps
 			echo "rendering preview $i using frame ". ceil($totalframes*($i * "0.1")) ." at ". $frame ." of $totalframes\n<br>";
-			exec ("/usr/local/bin/ffmpeg -v quiet -hide_banner -ss $frame -i $dirlocation/m/$fileid -frames 1 -qscale:v 2 $dirlocation/i/$purpose/$thumbnailname");
+			exec ("/bin/ffmpeg -v quiet -hide_banner -ss $frame -i $dirlocation/m/$fileid -frames 1 -qscale:v 2 $dirlocation/i/$purpose/$thumbnailname");
 		}
 		// whatever image is fileid.jpg is the visible thumbnail, others just there for alternates 
 		copy ("$dirlocation/i/$purpose/".substr($fileid,0,-4) . "-1.jpg", "$dirlocation/i/$purpose/". substr($fileid,0,-4) .".jpg");
@@ -4001,9 +4002,12 @@ function makeCase($string) {
 };
 
 function ScriptTime($starttime) {
+	global $conn;
 	$mtime = microtime(); $mtime = explode(" ",$mtime); $mtime = $mtime[1] + $mtime[0]; $endtime = $mtime; $totaltime = ($endtime - $starttime) * 1000;
 	$totaltime = sprintf("%.2f", $totaltime);
 	echo "<!-- This page was created in ".$totaltime." milliseconds -->"; 
+	$r = mysqli_fetch_row(mysqli_query($conn, "SHOW SESSION STATUS LIKE 'Questions'"));
+	echo "<!-- queries: " . ($r[1] - 1) . " -->";
 }
 
 function CurPageURL() {

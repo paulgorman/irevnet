@@ -42,6 +42,7 @@ function htmlHeader($dataArray) {
 		<link rel="stylesheet" type="text/css" href="/templates/css/responsiveboilerplate.css">
 		<link rel="stylesheet" type="text/css" href="/templates/css/irev.css">
 		<link href="https://micro.blog/presence" rel="me" />
+		<link href="https://srs.lol/profile/presence" rel="me" />
 		<? if (isset($dataArray['css'])) { foreach ($dataArray['css'] as $css) { ?> 
 			<link rel="stylesheet" href="/templates/css/<?= $css; ?>" />
 		<? } } ?>
@@ -316,7 +317,7 @@ function htmlFooter($meta) {
 					Designed and <a href="https://github.com/paulgorman/irevnet">Coded</a> by <a href="mailto:paul@irev.net">Paul Gorman</a> &copy;<? echo date("Y"); ?><br>
 					<a href="http://www.mxguarddog.com/">spam filter in the cloud</a><br>
 					<? /* <a href="http://www.diamonds2cash.com/sell-diamonds">sell diamonds online</a> */ ?>
-					<a rel="me" href="https://hachyderm.io/@presence">Mastodon</a>
+					<a rel="me" href="https://srs.lol/">Fediverse</a>
 
 				</p>
 			</footer>

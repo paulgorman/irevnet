@@ -45,6 +45,7 @@ RewriteRule ^adminpageimageclipboard[/]? index.php?page=adminpageimageclipboard 
 RewriteRule ^tag/([a-zA-Z0-9_-]+) /index.php?page=findbytag&tag=$1 [QSA,L,NC]
 RewriteRule ^(irev|irev.net|classic|bbs|irevnet)[/]? /index.php?page=irev [QSA,L,NC]
 RewriteRule ^(about|contact)[/]? /index.php?page=about [QSA,L,NC]
+RewriteRule ^(mermaid)[/]? /index.php?page=sample&url=mermaid-me-summer-2021 [QSA,L,NC]
 RewriteRule ^admin[/]?([a-z_-]+)?[/]?([a-z_-]+)?[/]?([a-zA-Z0-9_-]+)? /index.php?page=admin&url=$1&function=$2&listpage=$3 [QSA,L,NC]
 RewriteRule ^login /index.php?page=admin&url=login [QSA,L,NC]
 
@@ -56,4 +57,3 @@ RewriteRule ^(.*)$ / [R=302]
 deny from all
 </Files>
 
-IndexOptions NameWidth=*
