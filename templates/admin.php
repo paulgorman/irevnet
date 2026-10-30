@@ -614,15 +614,15 @@ function AdminShowCategories ($categorieslist) {
 			<div class="AdminCategoryListingAddContainer">
 				<div class="AdminCategoryListingAddHeader">ADD NEW CATEGORY</div>
 				<div class="AdminCategoryListingAddItem">Category Name:</div>
-				<div class="AdminCategoryListingAddValue"><input type="text" name="form_category" value="<?= MakeCase(htmlspecialchars(trim($_REQUEST['form_category']))); ?>" size="20"></div>
+				<div class="AdminCategoryListingAddValue"><input type="text" name="form_category" value="<?= MakeCase(htmlspecialchars(trim(($_REQUEST['form_category'] ?? '')))); ?>" size="20"></div>
 				<div class="AdminCategoryListingAddItem">URL:</div>
-				<div class="AdminCategoryListingAddValue"><input type="text" placeholder="Optional" name="form_url" value="<?= htmlspecialchars(trim($_REQUEST['form_url'])); ?>" size="15" style="text-transform: lowercase"></div>
+				<div class="AdminCategoryListingAddValue"><input type="text" placeholder="Optional" name="form_url" value="<?= htmlspecialchars(trim(($_REQUEST['form_url'] ?? ''))); ?>" size="15" style="text-transform: lowercase"></div>
 				<div class="clear"></div>
 				<div class="AdminCategoryListingAddItem">Description:</div>
-				<div class="AdminCategoryListingAddValue"><input type="text" name="form_description" value="<?= htmlspecialchars(trim($_REQUEST['form_description'])); ?>" size="40"></div>
+				<div class="AdminCategoryListingAddValue"><input type="text" name="form_description" value="<?= htmlspecialchars(trim(($_REQUEST['form_description'] ?? ''))); ?>" size="40"></div>
 				<div class="clear"></div>
 				<div class="AdminCategoryListingAddItem">sample Names:</div>
-				<div class="AdminCategoryListingAddValue"><select name="force_display_names"><?= DisplayNamesOptionsDropDown($dataarray['cid']) ?></select></div>
+				<div class="AdminCategoryListingAddValue"><select name="force_display_names"><?= DisplayNamesOptionsDropDown($dataarray['cid'] ?? NULL) ?></select></div>
 				<div class="clear"></div>
 				<div class="AdminCategoryListingAddItem">Category Logo:</div>
 				<div class="AdminCategoryListingAddValue"><input name="filesToUpload[]" class="filesToUpload" size="40" id="1" type="file" multiple="" accept="image/png"></div>
@@ -741,7 +741,7 @@ function AdminEditCategory($dataarray) {
 				</div>
 				<div class="clear"></div>
 				<div class="AdminCategoryListingEditItem">sample Names:</div>
-				<div class="AdminCategoryListingAddValue"><select name="force_display_names"><?= DisplayNamesOptionsDropDown($dataarray['cid']) ?></select></div>
+				<div class="AdminCategoryListingAddValue"><select name="force_display_names"><?= DisplayNamesOptionsDropDown($dataarray['cid'] ?? NULL) ?></select></div>
 				<div class="clear"></div>
 				<div class="AdminCategoryListingEditItem">Stored Image:</div>
 				<div class="AdminCategoryListingShowImage"><img src="/i/category/<?= $dataarray['image_id'] ?>"></div>
@@ -786,12 +786,12 @@ function AdminEditCategory($dataarray) {
 			<div class="AdminCategoryListingAddContainer">
 				<div class="AdminCategoryListingAddHeader">ADD NEW SUB-CATEGORY</div>
 				<div class="AdminCategoryListingAddItem">Sub-Category Name:</div>
-				<div class="AdminCategoryListingAddValue"><input type="text" name="form_category" value="<?= MakeCase(htmlspecialchars(trim($_REQUEST['form_category']))); ?>" size="20"></div>
+				<div class="AdminCategoryListingAddValue"><input type="text" name="form_category" value="<?= MakeCase(htmlspecialchars(trim(($_REQUEST['form_category'] ?? '')))); ?>" size="20"></div>
 				<div class="AdminCategoryListingAddItem">URL:</div>
-				<div class="AdminCategoryListingAddValue"><input type="text" placeholder="Optional" name="form_url" value="<?= htmlspecialchars(trim($_REQUEST['form_url'])); ?>" size="15" style="text-transform: lowercase"></div>
+				<div class="AdminCategoryListingAddValue"><input type="text" placeholder="Optional" name="form_url" value="<?= htmlspecialchars(trim(($_REQUEST['form_url'] ?? ''))); ?>" size="15" style="text-transform: lowercase"></div>
 				<div class="clear"></div>
 				<div class="AdminCategoryListingAddItem">Description:</div>
-				<div class="AdminCategoryListingAddValue"><input type="text" name="form_description" value="<?= htmlspecialchars(trim($_REQUEST['form_description'])); ?>" size="40"></div>
+				<div class="AdminCategoryListingAddValue"><input type="text" name="form_description" value="<?= htmlspecialchars(trim(($_REQUEST['form_description'] ?? ''))); ?>" size="40"></div>
 				<div class="clear"></div>
 				<div class="AdminCategoryListingAddItem">Sub-Category Logo:</div>
 				<div class="AdminCategoryListingAddValue"><input name="filesToUpload[]" class="filesToUpload" size="40" id="1" type="file" multiple=""></div>
@@ -977,13 +977,13 @@ function AdminsampleFormNew() {
 			<div class="AdminCategoryListingAddContainer">
 				<div class="AdminCategoryListingAddHeader">ADD NEW SAMPLE</div>
 				<div class="AdminCategoryListingAddItem">Sample Real Name</div>
-				<div class="AdminCategoryListingAddValue"><input type="text" name="name" value="<?= MakeCase(htmlspecialchars(trim($_REQUEST['name']))); ?>" size="50"></div>
+				<div class="AdminCategoryListingAddValue"><input type="text" name="name" value="<?= MakeCase(htmlspecialchars(trim(($_REQUEST['name'] ?? '')))); ?>" size="50"></div>
 				<div class="clear"></div>
 				<div class="AdminCategoryListingAddItem">Sample's Obfuscated Display Name</div>
-				<div class="AdminCategoryListingAddValue"><input type="text" name="display_name" placeholder="Optional (auto-generated)" value="<?= MakeCase(htmlspecialchars(trim($_REQUEST['display_name']))); ?>" size="50"></div>
+				<div class="AdminCategoryListingAddValue"><input type="text" name="display_name" placeholder="Optional (auto-generated)" value="<?= MakeCase(htmlspecialchars(trim(($_REQUEST['display_name'] ?? '')))); ?>" size="50"></div>
 				<div class="clear"></div>
 				<div class="AdminCategoryListingAddItem">One-Line Summary,<br> Header, Slug</div>
-				<div class="AdminCategoryListingAddTextBox"><textarea rows="2" cols="50" name="slug" wrap="virtual"><?= MakeCase(htmlspecialchars(trim($_REQUEST['slug']))); ?></textarea></div>
+				<div class="AdminCategoryListingAddTextBox"><textarea rows="2" cols="50" name="slug" wrap="virtual"><?= MakeCase(htmlspecialchars(trim(($_REQUEST['slug'] ?? '')))); ?></textarea></div>
 				<div class="clear"></div>
 				<div class="AdminCategoryListingAddItem">&nbsp;</div>
 				<div class="clear"></div>
@@ -991,19 +991,19 @@ function AdminsampleFormNew() {
 				<div class="clear"></div>
 				<div class="AdminCategoryListingAddItem"><label for="is_active">Sample is Active</label></div>
     		<div class="AdminCategoryListingCheckBox">
-					<input type="checkbox" name="is_active" id="is_active" class="regular-checkbox big-checkbox" <?= /* I want default first page to be checked */ ($_REQUEST['is_active'] || !($_REQUEST['formpage']))? 'CHECKED ' : ''; ?>/><label title="Active, available for gigs" for="is_active"></label>
+					<input type="checkbox" name="is_active" id="is_active" class="regular-checkbox big-checkbox" <?= /* I want default first page to be checked */ (($_REQUEST['is_active'] ?? '') || !(($_REQUEST['formpage'] ?? '')))? 'CHECKED ' : ''; ?>/><label title="Active, available for gigs" for="is_active"></label>
 				</div>
 				<div class="AdminCategoryListingAddItem"><label for="is_searchable">Sample is Searchable</label></div>
     		<div class="AdminCategoryListingCheckBox">
-					<input type="checkbox" name="is_searchable" id="is_searchable" class="regular-checkbox big-checkbox" <?= /* I want default first page to be checked */ ($_REQUEST['is_searchable'] || !($_REQUEST['formpage']))? 'CHECKED ' : ''; ?>/><label title="Sample listed in search results" for="is_searchable"></label>
+					<input type="checkbox" name="is_searchable" id="is_searchable" class="regular-checkbox big-checkbox" <?= /* I want default first page to be checked */ (($_REQUEST['is_searchable'] ?? '') || !(($_REQUEST['formpage'] ?? '')))? 'CHECKED ' : ''; ?>/><label title="Sample listed in search results" for="is_searchable"></label>
 				</div>
 				<div class="AdminCategoryListingAddItem"><label for="is_highlighted">Highlighted on Home Page<br>and Category Listings</label></div>
     		<div class="AdminCategoryListingCheckBox">
-					<input type="checkbox" name="is_highlighted" id="is_highlighted" class="regular-checkbox big-checkbox" <?= /* I want default first page to be unchecked */ ($_REQUEST['is_highlighted'])? 'CHECKED ' : ''; ?>/><label title="Sample is highlighted on Home Page and Category Listings" for="is_highlighted"></label>
+					<input type="checkbox" name="is_highlighted" id="is_highlighted" class="regular-checkbox big-checkbox" <?= /* I want default first page to be unchecked */ (($_REQUEST['is_highlighted'] ?? ''))? 'CHECKED ' : ''; ?>/><label title="Sample is highlighted on Home Page and Category Listings" for="is_highlighted"></label>
 				</div>
 				<div class="clear"></div>
 				<div class="AdminCategoryListingAddItem">Bio</div>
-				<div class="AdminCategoryListingAddTextBox"><textarea style="resize: both;" rows="8" cols="85" name="bio" wrap="virtual"><?= htmlspecialchars(trim($_REQUEST['bio'])); ?></textarea></div>
+				<div class="AdminCategoryListingAddTextBox"><textarea style="resize: both;" rows="8" cols="85" name="bio" wrap="virtual"><?= htmlspecialchars(trim(($_REQUEST['bio'] ?? ''))); ?></textarea></div>
 				<div class="clear">&nbsp;</div>
 
 				<div class="AdminCategoryListingAddItem">

@@ -1154,7 +1154,7 @@ function DisplayVideoPlayer($sampleinfo) {
 			'controlbar': 'over',
 			'shownavigation': 'true',
 			'icons': false,
-			'width': '<?= $sampleinfo['media']['widthdisplay']; ?>',
+			'width': '<?= $sampleinfo['media']['widthdisplay'] ?? ''; ?>',
 			'stretching': 'uniform',
 			<?= (isset($sampleinfo['media']['heightdisplay']))? $sampleinfo['media']['heightdisplay'] : NULL ?>
 			'aspectratio': '<?= $sampleinfo['media']['aspectratio']; ?>',
@@ -1453,7 +1453,7 @@ function ShowAdminPage() {
 					} else {
 						$oid = (preg_replace("/[^0-9]/","",$_REQUEST['oid']));
 					}
-					switch ($_REQUEST['executeButton']) {
+					switch ($_REQUEST['executeButton'] ?? '') {
 						case "delete":
 							AdminsampleDelete($oid);
 							break;
@@ -2574,7 +2574,7 @@ function AdminListsamplesByCategory() {
 	);
 	$result = mysqli_query($conn,$query);
 	// XXX: no pagination, just a long listing
-	AdminsampleListPageByCategory($result,$page);
+	AdminsampleListPageByCategory($result,NULL); // $page was never defined here
 	mysqli_free_result($result);
 }
 
@@ -3149,13 +3149,14 @@ function AdminSelectCategories($oid = NULL) {
 			$samplecategories[$row['cid']] = TRUE;
 		}
 	}
+	$string = "";
 	foreach($categorieslist as $cid => $category) {
 		$s = 0; // selected flag
-		if ($samplecategories[$cid]) {
+		if (!empty($samplecategories[$cid])) {
 			// if sample is assigned to category is in the database
 			$s++;
 		}
-		if (($_REQUEST['formpage'] == 1) && is_countable($_REQUEST['categories'])) {
+		if ((($_REQUEST['formpage'] ?? NULL) == 1) && is_countable($_REQUEST['categories'] ?? NULL)) {
 			// if this is from the new sample webform...
 			if (strlen(array_search($cid,$_REQUEST['categories'])) > 0) { // LAME: array_search returns null for a key that's "0"
 				// if sample selected to category from form page 1
@@ -3178,10 +3179,14 @@ function AdminSelectSubCategories($sampleinfo) {
 	$subcategorieslist = array();
 	$samplesubcategories = array();
 	$parentcatslist = array();
+	$parent_cids = "";
 	foreach ($sampleinfo['categories'] as $cid) {
 		$parent_cids .= "$cid,";
 	}
 	$parent_cids = substr($parent_cids, 0, -1);
+	if ($parent_cids === "") {
+		$parent_cids = "0"; // sample is in no category yet: nothing to offer, and avoids an invalid IN ()
+	}
 	$query = sprintf("SELECT * FROM `subcategories` WHERE `parent_cid` IN (%s) ORDER BY `subcategory`",
 		mysqli_real_escape_string($conn,$parent_cids)
 	);
@@ -3212,9 +3217,10 @@ function AdminSelectSubCategories($sampleinfo) {
 				<div class="AdminCategoryListingAddDropDown">
 					<select id="SubCategories" multiple="multiple" name="subcategories[]" title="SubCategories" class="sminit">
 		<?
+		$string = "";
 		foreach($subcategorieslist as $subid => $subcategory) {
 			$s = 0; // selected flag
-			if ($samplesubcategories[$subid]) {
+			if (!empty($samplesubcategories[$subid])) {
 				// if sample is assigned to category is in the database
 				$s++;
 			}
@@ -3297,12 +3303,13 @@ function AdminSelectStyles($oid = NULL) {
 			$samplestyles[$row['sid']] = TRUE;
 		}
 	}
+	$string = "";
 	foreach($styleslist as $sid => $name) {
 		$s = 0;
-		if ($samplestyles[$sid]) {
+		if (!empty($samplestyles[$sid])) {
 			$s++;
 		}
-		if (($_REQUEST['formpage'] == 1) && (is_countable($_REQUEST['styles']))) {
+		if ((($_REQUEST['formpage'] ?? NULL) == 1) && (is_countable($_REQUEST['styles'] ?? NULL))) {
 			if (strlen(array_search($sid,$_REQUEST['styles'])) > 0) {
 				$s++;
 			}
@@ -3338,6 +3345,8 @@ function AdminSelectLocations($oid = NULL) {
 	}
 	// insanity to make the dropdown list nice grouped by state
 	$oldstate = "";
+	$string = "";
+	$firstpost = 0;
 	foreach($locationslist as $lid => $citystate) {
 		if ($citystate[1] != $oldstate) {
 			($firstpost)? $string .= "</optgroup>" : $firstpost++;
@@ -3345,10 +3354,10 @@ function AdminSelectLocations($oid = NULL) {
 			$oldstate = $citystate[1];
 		}
 		$s = 0;
-		if ($samplelocations[$lid]) {
+		if (!empty($samplelocations[$lid])) {
 			$s++;
 		}
-		if (($_REQUEST['formpage'] == 1) && (count($_REQUEST['locations']) > 0)) {
+		if ((($_REQUEST['formpage'] ?? NULL) == 1) && (count($_REQUEST['locations'] ?? array()) > 0)) {
 			if (strlen(array_search($lid,$_REQUEST['locations'])) > 0) {
 				$s++;
 			}
@@ -3936,7 +3945,7 @@ function DisplayNamesOptionsDropDown($cid) {
 		$result = mysqli_query($conn,$query);
 		$row = mysqli_fetch_assoc($result);
 	}
-	$display_mode = $row['force_display_names'];
+	$display_mode = $row['force_display_names'] ?? NULL;
 	$options = array(
 		"I" => "Use the Individual Sample's Setting",
 		"N" => "Real Names to be used for All Samples in this Category",
