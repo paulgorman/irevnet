@@ -96,6 +96,29 @@ function ListAllCategories($categoryList) {
 	echo "</div>";
 }
 
+function ListSubCategories($subs, $parenturl) {
+	// tiles for the sub-categories of a category: $subs rows of subcategory, url, description, image_id
+	if (count($subs) == 0) {
+		return;
+	}
+	echo "<div class='content'>";
+	$i = 0;
+	foreach ($subs as $sub) {
+		$i++;
+		($i % 2 == 0 )? $float="fr" : $float="fl";
+		$href = "/category/" . $parenturl . "/" . $sub['url'];
+		$title = $sub['subcategory'] . " - " . $sub['description'];
+		echo "<div class=\"box catButton blue $float\"><a href=\"$href\">";
+		if (!isEmpty($sub['image_id'])) {
+			echo "<img src=\"/i/category/" . $sub['image_id'] . "\" width=\"420\" height=\"62\" title=\"$title\" alt=\"" . $sub['subcategory'] . "\">";
+		} else {
+			echo $sub['subcategory'];
+		}
+		echo "</a></div>";
+	}
+	echo "<div class=\"clear\"></div></div>";
+}
+
 function htmlCategoryImage($categoryImage,$category) {
 	?>
 		<div class='catHeader'><img src="/i/category/<?= $categoryImage; ?>" width="485" height="60" title="<?= $category; ?>" alt="<?= $category; ?>"></div>

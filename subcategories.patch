@@ -1,0 +1,281 @@
+--- orig/shared.php	2026-10-23 00:08:55.000000000 +0000
++++ irev.net/shared.php	2026-10-30 00:57:14.534698781 +0000
+@@ -275,8 +275,16 @@
+ 			$meta['breadcrumb'][1]['name'] = $sampleinfo[$oid]['category'];
+ 			$meta['breadcrumb'][1]['url'] = curServerURL() . "category/" . $sampleinfo[$oid]['caturl'];
+ 		}
+-		$meta['breadcrumb'][2]['name'] = $sampleinfo[$oid]['name'];
+-		$meta['breadcrumb'][2]['url'] = curPageURL();
++		$crumb = 2;
++		$sampleSub = ($sampleinfo[$oid]['category']) ? getSampleSubCategory($oid, $sampleinfo[$oid]['cid']) : NULL;
++		if ($sampleSub) {
++			// Portfolio > Category > Sub-category > Sample
++			$meta['breadcrumb'][2]['name'] = $sampleSub['subcategory'];
++			$meta['breadcrumb'][2]['url'] = curServerURL() . "category/" . $sampleinfo[$oid]['caturl'] . "/" . $sampleSub['url'];
++			$crumb = 3;
++		}
++		$meta['breadcrumb'][$crumb]['name'] = $sampleinfo[$oid]['name'];
++		$meta['breadcrumb'][$crumb]['url'] = curPageURL();
+ 	} else {
+ 		$meta['breadcrumb'][1]['name'] = "Selection: ";
+ 		$meta['breadcrumb'][1]['url'] = curPageURL();
+@@ -538,19 +546,78 @@
+ 	return($cid);
+ }
+ 
+-function getSampleSubCategory ($oid) {
++function getSampleSubCategory($oid, $cid) {
+ 	global $conn;
+-	$subid = NULL;
+-	if ($strlen(preg_replace("/[^0-9]/","",$_SESSION['subcategory'])) >= 1) {
+-		$sess_subid = preg_replace("/[^0-9]/","",$_SESSION['subcategory']);
+-		$query = sprintf(
+-			"SELECT `subcategories`.`subid` FROM `subcategories`
+-			 LEFT OUTER JOIN `samplesubcategories` ON `subcategories`.`subid` = `samplesubcategories`.`subid`
+-			 WHERE `samplesubcategories`.`oid` = '%s' AND `subcategories`.`published` = 1 ORDER BY `subcategories`.`subcategory` ASC",
+-			mysqli_real_escape_string($conn,$oid)
+-		);
+-		// XXX: sure great, but what about if that subcat is in the parent's cat??
++	// the sub-category (if any) that this sample sits in under category $cid, as a row, or NULL
++	$query = sprintf(
++		"SELECT `subcategories`.* FROM `subcategories`
++		 INNER JOIN `samplesubcategories` ON `subcategories`.`subid` = `samplesubcategories`.`subid`
++		 WHERE `samplesubcategories`.`oid` = '%s' AND `subcategories`.`parent_cid` = '%s'
++		 ORDER BY `subcategories`.`subcategory` ASC LIMIT 0,1",
++		mysqli_real_escape_string($conn,$oid),
++		mysqli_real_escape_string($conn,$cid)
++	);
++	$result = mysqli_query($conn,$query);
++	if ($result && mysqli_num_rows($result)) {
++		return mysqli_fetch_array($result, MYSQLI_ASSOC);
++	}
++	return NULL;
++}
++
++function AllSubCategories() {
++	global $conn;
++	// every sub-category, keyed by subid. One query per page load, however many callers.
++	static $subs = NULL;
++	if ($subs === NULL) {
++		$subs = array();
++		$result = mysqli_query($conn, "SELECT * FROM `subcategories` ORDER BY `subcategory` ASC");
++		if ($result) {
++			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
++				$subs[$row['subid']] = $row;
++			}
++		}
++	}
++	return $subs;
++}
++
++function SubCategoriesOfCategory($cid) {
++	$mine = array();
++	foreach (AllSubCategories() as $subid => $sub) {
++		if ($sub['parent_cid'] == $cid) {
++			$mine[$subid] = $sub;
++		}
++	}
++	return $mine;
++}
++
++function GetSubCategoryByUrl($url, $parent_cid = NULL) {
++	// find a sub-category by its url, optionally insisting on a particular parent category
++	foreach (AllSubCategories() as $sub) {
++		if (strtolower($sub['url']) == strtolower($url) && ($parent_cid === NULL || $sub['parent_cid'] == $parent_cid)) {
++			return $sub;
++		}
++	}
++	return NULL;
++}
++
++function CategoryUrlFromCid($cid) {
++	global $conn;
++	$result = mysqli_query($conn, sprintf("SELECT `url` FROM `categories` WHERE `cid` = '%s'", mysqli_real_escape_string($conn,$cid)));
++	if ($result && mysqli_num_rows($result)) {
++		return strtolower(mysqli_fetch_array($result, MYSQLI_NUM)[0]);
+ 	}
++	return "";
++}
++
++function NotInSubCategoriesSQL($cid) {
++	global $conn;
++	// SQL fragment: this sample is not in any sub-category of category $cid, so it's listed right in the category itself
++	return sprintf(
++		" AND NOT EXISTS (SELECT 1 FROM `samplesubcategories`
++		   INNER JOIN `subcategories` ON `subcategories`.`subid` = `samplesubcategories`.`subid`
++		   WHERE `samplesubcategories`.`oid` = `samples`.`oid` AND `subcategories`.`parent_cid` = '%s')",
++		mysqli_real_escape_string($conn,$cid)
++	);
+ }
+ 
+ function FaceBookLike($sampleinfo) {
+@@ -632,6 +699,17 @@
+ 			$categorynames[] = strtolower($row['category']);
+ 			$categoryurls[] = strtolower($row['url']);
+ 		}
++		// /category/mermaiding on its own may be a sub-category: find its parent so flat-style links keep working
++		if (!in_array($url,$categoryurls) && isEmpty($subcat)) {
++			$bare = GetSubCategoryByUrl($url);
++			if ($bare) {
++				$parenturl = CategoryUrlFromCid($bare['parent_cid']);
++				if (!isEmpty($parenturl)) {
++					$subcat = strtolower($bare['url']);
++					$url = $parenturl;
++				}
++			}
++		}
+ 		$closestCategoryFromRequest = ClosestWord($url,$categoryurls);
+ 		// sample names default to not obfuscated using real names, not requiring display names.
+ 		$obfuscatedsampleNames = 0;
+@@ -645,6 +723,8 @@
+ 			ErrorDisplay("No Categories Match Your Request");
+ 		} else {
+ 			$categoryInfo = mysqli_fetch_array($resultMatchingCategories, MYSQLI_ASSOC);
++			// /category/photography/mermaiding : the sub-category must belong to this category, otherwise show the category itself
++			$subInfo = isEmpty($subcat) ? NULL : GetSubCategoryByUrl($subcat, $categoryInfo['cid']);
+ 			// check obfuscated cookie status
+ 			if ($_SESSION['obfuscate'] == "1") {
+ 				$obfuscatedsampleNames = 1;
+@@ -660,14 +740,20 @@
+ 			// sort them by is_highlighted desc, name asc,
+ 			// save data to $samples array
+ 			$samples = array(); // the big array of good samples data
+-			$query = sprintf(
+-				"SELECT `samples`.`oid`, `samples`.`name`, `samples`.`display_name`, `samples`.`url`, 
++			if ($subInfo) {
++				// sub-category page: samples ticked for this sub-category
++				$sampleSource = "`samples` INNER JOIN `samplesubcategories` ON `samples`.`oid` = `samplesubcategories`.`oid` " .
++					"WHERE `samplesubcategories`.`subid` = '" . mysqli_real_escape_string($conn,$subInfo['subid']) . "'";
++			} else {
++				// category page: samples in the category, minus the ones that live down in one of its sub-categories
++				$sampleSource = "`samples` INNER JOIN `samplecategories` ON `samples`.`oid` = `samplecategories`.`oid` " .
++					"WHERE `samplecategories`.`cid` = '" . mysqli_real_escape_string($conn,$categoryInfo['cid']) . "'" .
++					NotInSubCategoriesSQL($categoryInfo['cid']);
++			}
++			$query = "SELECT `samples`.`oid`, `samples`.`name`, `samples`.`display_name`, `samples`.`url`,
+ 				 `samples`.`alt_url`, `samples`.`slug`, `samples`.`use_display_name`, `samples`.`is_highlighted`
+-				 FROM `samples` LEFT OUTER JOIN `samplecategories` ON `samples`.`oid` = `samplecategories`.`oid` 
+-				 WHERE `samplecategories`.`cid` = '%s' AND `samples`.`is_searchable` = 1 AND `samples`.`is_active` = 1 
+-				 ORDER BY `samples`.`is_highlighted` DESC, `samples`.`name` ASC",
+-				mysqli_real_escape_string($conn,$categoryInfo['cid'])
+-			);
++				 FROM " . $sampleSource . " AND `samples`.`is_searchable` = 1 AND `samples`.`is_active` = 1
++				 ORDER BY `samples`.`is_highlighted` DESC, `samples`.`name` ASC";
+ 			$result = mysqli_query($conn,$query);
+ 			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+ 				$samples[$row['oid']] = array();
+@@ -715,6 +801,16 @@
+ 			}
+ 			// So what was the best real category name that matches the random user request?
+ 			$closestCategoryFromRequest = $categoryInfo['category'];
++			$parentName = $categoryInfo['category'];
++			$parentUrl = $categoryInfo['url'];
++			if ($subInfo) {
++				// from here on, present the sub-category as if it were the category being shown
++				$closestCategoryFromRequest = $subInfo['subcategory'];
++				$categoryInfo['description'] = $subInfo['description'];
++				if (!isEmpty($subInfo['image_id'])) {
++					$categoryInfo['image_id'] = $subInfo['image_id'];
++				}
++			}
+ 			//$closestCategoryFromRequest = ucWords(ClosestWord($url,$categorynames));
+ 
+ 			// meta keywords
+@@ -748,10 +844,18 @@
+ 			//$meta['js'][] = "presgrid.js";
+ 			$meta['breadcrumb'][0]['name'] = "Portfolio Samples";
+ 			$meta['breadcrumb'][0]['url'] = curServerURL() . "portfolio/";
+-			$meta['breadcrumb'][1]['name'] = $closestCategoryFromRequest;
+-			$meta['breadcrumb'][1]['url'] = curPageURL();
++			if ($subInfo) {
++				$meta['breadcrumb'][1]['name'] = $parentName;
++				$meta['breadcrumb'][1]['url'] = curServerURL() . "category/" . $parentUrl;
++				$meta['breadcrumb'][2]['name'] = $closestCategoryFromRequest;
++				$meta['breadcrumb'][2]['url'] = curPageURL();
++			} else {
++				$meta['breadcrumb'][1]['name'] = $closestCategoryFromRequest;
++				$meta['breadcrumb'][1]['url'] = curPageURL();
++			}
+ 
+ 			$_SESSION['category'] = $categoryInfo['cid'];
++			$_SESSION['subcategory'] = $subInfo ? $subInfo['subid'] : '';
+ 			htmlHeader($meta);
+ 			htmlMasthead($meta);
+ 			htmlDropDownNavigationSingle(gatherNavData());
+@@ -762,6 +866,7 @@
+ 				ListsampleCarousel($closestCategoryFromRequest,$samplesHighlighted);
+ 				htmlBodyStart();
+ 				htmlCategoryImageBelow($categoryInfo['image_id'], $closestCategoryFromRequest);
++				ListSubCategories($subInfo ? array() : SubCategoriesOfCategory($categoryInfo['cid']), $parentUrl); // sub-category tiles, category pages only
+ 				ListsamplesForCategory($closestCategoryFromRequest,$samples);
+ 				ListsamplesTextLinks($categoryInfo,$samples); 
+ 				fwdConsCarousel(); // dump this stuff in at the bottom of html
+@@ -771,6 +876,7 @@
+ 				htmlBreadcrumb($meta);
+ 				htmlCategoryImage($categoryInfo['image_id'], $closestCategoryFromRequest);
+ 				htmlBodyStart();
++				ListSubCategories($subInfo ? array() : SubCategoriesOfCategory($categoryInfo['cid']), $parentUrl); // sub-category tiles, category pages only
+ 				ListsamplesForCategory($closestCategoryFromRequest,$samples);
+ 				ListsamplesTextLinks($categoryInfo,$samples); 
+ 			}
+@@ -931,7 +1037,7 @@
+ 			if ($subcategories[$key]['cid'] == $categoryData['cid']) {
+ 				$navdata[$i][$j]['name'] = $subcategories[$key]['subcategory'];
+ 				$navdata[$i][$j]['description'] = $subcategories[$key]['description'];
+-				$navdata[$i][$j]['url'] = "/category/" . $subcategories[$key]['url'];
++				$navdata[$i][$j]['url'] = "/category/" . $categoryData['url'] . "/" . $subcategories[$key]['url'];
+ 				$j++;
+ 			}
+ 		}
+@@ -975,14 +1081,12 @@
+ 	// sort them by is_highlighted desc, name asc,
+ 	// save data to $samples array
+ 	$samples = array(); // the big array of good samples data
+-	$query = sprintf(
+-		"SELECT `samples`.`oid`, `samples`.`name`, `samples`.`display_name`, `samples`.`url`, 
++	$query = "SELECT `samples`.`oid`, `samples`.`name`, `samples`.`display_name`, `samples`.`url`,
+ 		 `samples`.`alt_url`, `samples`.`slug`, `samples`.`use_display_name`, `samples`.`is_highlighted`
+-		 FROM `samples` LEFT OUTER JOIN `samplecategories` ON `samples`.`oid` = `samplecategories`.`oid` 
+-		 WHERE `samplecategories`.`cid` = '%s' AND `samples`.`is_searchable` = 1 AND `samples`.`is_active` = 1 
+-		 ORDER BY `samples`.`is_highlighted` DESC, `samples`.`name` ASC",
+-		mysqli_real_escape_string($conn,$cid)
+-	);
++		 FROM `samples` INNER JOIN `samplecategories` ON `samples`.`oid` = `samplecategories`.`oid`
++		 WHERE `samplecategories`.`cid` = '" . mysqli_real_escape_string($conn,$cid) . "'" . NotInSubCategoriesSQL($cid) . "
++		 AND `samples`.`is_searchable` = 1 AND `samples`.`is_active` = 1
++		 ORDER BY `samples`.`is_highlighted` DESC, `samples`.`name` ASC";
+ 	$result = mysqli_query($conn,$query);
+ 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+ 		$samples[$row['oid']] = array();
+--- orig/templates/categories.php	2023-09-11 01:23:24.000000000 +0000
++++ irev.net/templates/categories.php	2026-10-30 00:57:14.535216266 +0000
+@@ -96,6 +96,29 @@
+ 	echo "</div>";
+ }
+ 
++function ListSubCategories($subs, $parenturl) {
++	// tiles for the sub-categories of a category: $subs rows of subcategory, url, description, image_id
++	if (count($subs) == 0) {
++		return;
++	}
++	echo "<div class='content'>";
++	$i = 0;
++	foreach ($subs as $sub) {
++		$i++;
++		($i % 2 == 0 )? $float="fr" : $float="fl";
++		$href = "/category/" . $parenturl . "/" . $sub['url'];
++		$title = $sub['subcategory'] . " - " . $sub['description'];
++		echo "<div class=\"box catButton blue $float\"><a href=\"$href\">";
++		if (!isEmpty($sub['image_id'])) {
++			echo "<img src=\"/i/category/" . $sub['image_id'] . "\" width=\"420\" height=\"62\" title=\"$title\" alt=\"" . $sub['subcategory'] . "\">";
++		} else {
++			echo $sub['subcategory'];
++		}
++		echo "</a></div>";
++	}
++	echo "<div class=\"clear\"></div></div>";
++}
++
+ function htmlCategoryImage($categoryImage,$category) {
+ 	?>
+ 		<div class='catHeader'><img src="/i/category/<?= $categoryImage; ?>" width="485" height="60" title="<?= $category; ?>" alt="<?= $category; ?>"></div>
