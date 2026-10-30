@@ -49,6 +49,16 @@ RewriteRule ^(mermaid)[/]? /index.php?page=sample&url=mermaid-me-summer-2021 [QS
 RewriteRule ^admin[/]?([a-z_-]+)?[/]?([a-z_-]+)?[/]?([a-zA-Z0-9_-]+)? /index.php?page=admin&url=$1&function=$2&listpage=$3 [QSA,L,NC]
 RewriteRule ^login /index.php?page=admin&url=login [QSA,L,NC]
 
+# A missing URL that ends in a file extension (.jpg .gif .php .env ...) is a dead file link: the free
+# image hosting that ended in 2005 and is still embedded in old forum posts, or a scanner looking for
+# /wp-login.php. Answer "410 Gone" right here in Apache: no PHP, no database, no bounce to the home
+# page, and no phantom "visitor" in sitehits. Real files and directories are untouched.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule \.[a-zA-Z0-9]{2,5}$ - [G,NC]
+ErrorDocument 410 "Gone"
+
+# Anything else that's missing (a mistyped page name) still lands on the home page.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ / [R=302]

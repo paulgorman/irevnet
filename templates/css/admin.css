@@ -694,22 +694,41 @@ td {
 	margin-top: -1.9em;
 }
 
-.metricsOverviewBlock {
-	width: 960px;
-	margin: auto;
+/* ---- Metrics page ---- */
+.metricsPage {
+	max-width: 1100px;
+	margin: 8px auto;
+	padding: 0 8px;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+	gap: 12px;
+	align-items: start;
 }
 
-.metricsBlock {
+.metricsHeadline {
+	grid-column: 1 / -1;
+	color: #444;
+	font-size: 15px;
+	line-height: 1.4;
+}
+
+.metricsHeadline p {
+	margin: 2px 0;
+}
+
+.metricsCard {
 	color: #00529B;
 	background-color: #BDE5F8;
 	border: 1px solid;
-	width: 300px;
-	float: left;
-	margin: 8px;
+	min-width: 0;
+}
+
+.metricsWide {
+	grid-column: 1 / -1;
 }
 
 .metricsHeader {
-	text-align:center;
+	text-align: center;
 	font-weight: bold;
 	font-size: 13px;
 	color: #444;
@@ -718,29 +737,75 @@ td {
 	width: auto;
 }
 
-.metricsDomain {
-	padding: 4px;
-	font-size: 12px;
-	height: 3em;
-	color: #444;
-	float: left;
-	width: 210px;
+details > summary.metricsHeader {
+	cursor: pointer;
 }
 
-.metricsLabel {
-	padding: 4px;
-	font-size: 12px;
+.metricsTable {
+	width: 100%;
+	border-collapse: collapse;
 	color: #444;
-	float: left;
-	width: 40px;
 }
 
-.metricsValue {
-	padding: 4px 1em 0px 0px;
+.metricsTable th {
+	text-align: left;
 	font-size: 12px;
-	color: #444;
-	width: 40px;
-	float: right;
+	padding: 4px 8px;
+	border-bottom: 1px solid #8fbfd8;
+}
+
+.metricsTable td {
+	padding: 4px 8px;
+	vertical-align: top;
+}
+
+.metricsTable tbody tr:nth-child(even) {
+	background-color: rgba(255, 255, 255, 0.35);
+}
+
+.metricsTable .num {
+	text-align: right;
+	white-space: nowrap;
+}
+
+.metricsTable .strong {
+	font-weight: bold;
+}
+
+.metricsTable .nowrap {
+	white-space: nowrap;
+}
+
+.metricsTable .muted, .metricsTable tr.muted td {
+	color: #777;
+}
+
+.metricsPath {
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
+.metricsNote {
+	margin: 6px 8px;
+	font-size: 11px;
+	color: #555;
+}
+
+/* phones: each visit becomes a small card, path on its own line */
+@media (max-width: 600px) {
+	.metricsVisits, .metricsVisits tbody { display: block; }
+	.metricsVisits thead { display: none; }
+	.metricsVisits tr {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2px 12px;
+		padding: 6px 8px;
+		border-bottom: 1px solid #8fbfd8;
+	}
+	.metricsVisits td { padding: 0; }
+	.metricsVisits td.num { text-align: left; }
+	.metricsVisits td.num::after { content: " pg"; }
+	.metricsVisits td.metricsPath { order: 9; flex-basis: 100%; }
 }
 
 .clear {

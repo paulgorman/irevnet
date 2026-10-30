@@ -1182,109 +1182,6 @@ function getCommonDivisor($a, $b) {
 	return ($r != 0) ? getCommonDivisor($b, $r) : abs($b);
 }
 
-function AdminDisplaySiteStats() {
-	global $conn;
-	$hits = array();
-	$sessions = array();
-	$query = "SELECT * FROM sitehits where hit_datetime >= '".DatePHPtoSQL(strtotime('-7 days'))."' AND hit_datetime <= '".DatePHPtoSQL(time())."' AND hit_url LIKE '%irev.net%';";
-	$result = mysqli_query($conn, $query);
-	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-		$visitor = $row['hit_addr'];
-		if (array_key_exists($visitor, $hits)) { 
-			$hits[$visitor] = $hits[$visitor] + 1;
-		} else {
-			$hits[$visitor] = 1;
-		}
-		if (array_key_exists($visitor,$sessions)) {
-			if ($sessions[$visitor] < $row['sesscount']) {
-				$sessions[$visitor] = $row['sesscount'];
-			}
-		} else {
-			$sessions[$visitor] = 0;
-		}
-		arsort($hits);
-	}
-	?>
-		<div class="metricsOverviewBlock">
-		<div class="metricsBlock">
-			<div class="metricsHeader">Website Activity - 7 Days</div>
-			<? foreach ($hits as $visit => $hit) { 
-				if ($sessions[$visit] == 0) { continue; }
-				?>
-				<div class="metricsDomain"><?= $visit; ?></div>
-				<!--<div class="metricsLabel">Hits:</div>-->
-				<div class="metricsValue"><?= $hit + 0; ?>/<?= $sessions[$visit]; ?></div>
-			<? } ?>
-		</div> <!-- class="metricsBlock" -->
-	<?
-	$hits = array();
-	$sessions = array();
-	$query = "SELECT * FROM sitehits where hit_datetime >= '".DatePHPtoSQL(strtotime('-1 day'))."' AND hit_datetime <= '".DatePHPtoSQL(time())."' AND hit_url LIKE '%irev.net%';";
-	$result = mysqli_query($conn,$query);
-	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-		$visitor = $row['hit_addr'];
-		if (array_key_exists($visitor, $hits)) { 
-			$hits[$visitor] = $hits[$visitor] + 1;
-		} else {
-			$hits[$visitor] = 1;
-		}
-		if (array_key_exists($visitor, $sessions)) {
-			if ($sessions[$visitor] < $row['sesscount']) {
-				$sessions[$visitor] = $row['sesscount'];
-			}
-		} else {
-			$sessions[$visitor] = 0;
-		}
-		arsort($hits);
-	}
-	?>
-		<div class="metricsOverviewBlock">
-		<div class="metricsBlock">
-			<div class="metricsHeader">Website Activity - 24 Hours</div>
-			<? foreach ($hits as $visit => $hit) { 
-				if ($sessions[$visit] == 0) { continue; }
-				?>
-				<div class="metricsDomain"><?= $visit; ?></div>
-				<!--<div class="metricsLabel">Hits:</div>-->
-				<div class="metricsValue"><?= $hit + 0; ?>/<?= $sessions[$visit]; ?></div>
-			<? } ?>
-		</div> <!-- class="metricsBlock" -->
-		<?
-
-	$hits = array();
-	$sessions = array();
-	$query = "SELECT * FROM sitehits where hit_datetime >= '".DatePHPtoSQL(strtotime('-1 hour'))."' AND hit_datetime <= '".DatePHPtoSQL(time())."' AND hit_url LIKE '%irev.net%';";
-	$result = mysqli_query($conn, $query);
-	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-		$visitor = $row['hit_addr'];
-		if (array_key_exists($visitor, $hits)) { 
-			$hits[$visitor] = $hits[$visitor] + 1;
-		} else {
-			$hits[$visitor] = 1;
-		}
-		if (array_key_exists($visitor,$sessions)) {
-			if ($sessions[$visitor] < $row['sesscount']) {
-				$sessions[$visitor] = $row['sesscount'];
-			}
-		} else {
-			$sessions[$visitor] = 0;
-		}
-		arsort($hits);
-	}
-	?>
-		<div class="metricsOverviewBlock">
-		<div class="metricsBlock">
-			<div class="metricsHeader">Website Activity - 60 Minutes</div>
-			<? foreach ($hits as $visit => $hit) { ?>
-				<div class="metricsDomain"><?= $visit; ?></div>
-				<!--<div class="metricsLabel">Hits:</div>-->
-				<div class="metricsValue"><?= $hit + 0; ?>/<?= $sessions[$visit]; ?></div>
-			<? } ?>
-		</div> <!-- class="metricsBlock" -->
-		</div> <!-- class="MetricsOverviewBlock" -->
-	<?
-}
-
 function ShowAdminPage() {
 	$adminfunctions = array(
 		"Overview" => "",
@@ -1297,6 +1194,7 @@ function ShowAdminPage() {
 		"Metrics" => "web_stats"
 	);
 	include("templates/admin.php");
+	include_once("metrics.php"); // AdminDisplaySiteStats()
 	AdminHead($_REQUEST['url'],$adminfunctions);
 	AdminNav($_REQUEST['url'],$adminfunctions);
 	if (isEmpty($_REQUEST['url']) || ((string)$_REQUEST['url'] === "web_stats")) {
