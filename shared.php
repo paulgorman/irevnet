@@ -123,9 +123,7 @@ function DebugShow() {
 }
 
 function isAdmin() {
-	if ($_SESSION['is_admin'] === TRUE) {
-		return TRUE;
-	}
+	return (($_SESSION['is_admin'] ?? FALSE) === TRUE);
 }
 
 function AskForAdmin() {
