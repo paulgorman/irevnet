@@ -170,7 +170,7 @@ function htmlTags($samples) {
 		<div class="sampleTags">
 	<?
 	foreach (array_keys($samples) as $oid) {
-		foreach (array_keys($samples[$oid]['tags']) as $key) {
+		foreach (array_keys($samples[$oid]['tags'] ?? array()) as $key) {
 			if ($i > 8) { continue; }
 			$color = $colors[$i];
 			$i++;

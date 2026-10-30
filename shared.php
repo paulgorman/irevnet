@@ -228,29 +228,31 @@ function getSampleMetaTags($sampleinfo) {
 				$meta['keywords'] .= $sampleinfo[$key]['categories'][$subkey] . ", ";
 			}
 		}
-		foreach (array_keys($sampleinfo[$key]['tags']) as $subkey) {
+		foreach (array_keys($sampleinfo[$key]['tags'] ?? array()) as $subkey) {
 			$meta['keywords'] .= $sampleinfo[$key]['tags'][$subkey] . ", ";
 		}
-		foreach (array_keys($sampleinfo[$key]['locations']) as $subkey) {
+		foreach (array_keys($sampleinfo[$key]['locations'] ?? array()) as $subkey) {
 			$meta['keywords'] .= "'" . $sampleinfo[$key]['locations'][$subkey] . "', ";
 		}
 	}
 	$meta['keywords'] = substr($meta['keywords'], 0, -2) . ".";
-	// meta description is: name - slug (cat,egor,ies)
+	// meta description is: name - slug (t,ags)
 	$meta['description'] = "";
 	foreach (array_keys($sampleinfo) as $key) {
 		$meta['description'] .= $sampleinfo[$key]['name'];
 		$meta['description'] .= " - ";
 		$meta['description'] .= $sampleinfo[$key]['slug'];
-		$meta['description'] .= " (";
-		foreach (array_keys($sampleinfo[$key]['tags']) as $subkey) {
-			$meta['description'] .= $sampleinfo[$key]['tags'][$subkey] . ", ";
+		if (!empty($sampleinfo[$key]['tags'])) {
+			$meta['description'] .= " (";
+			foreach (array_keys($sampleinfo[$key]['tags']) as $subkey) {
+				$meta['description'] .= $sampleinfo[$key]['tags'][$subkey] . ", ";
+			}
+			$meta['description'] = substr($meta['description'], 0, -2) . ")";
 		}
-		$meta['description'] = substr($meta['description'], 0, -2) . ")";
 		$meta['description'] .= " / ";
 	}
 	$meta['description'] = substr($meta['description'], 0, -3);
-	// title is: Presence name - slug (sty,les)
+	// title is: Presence name - slug (cat,egor,ies)
 	$meta['title'] = "iRev.net ";
 	foreach (array_keys($sampleinfo) as $key) {
 		$meta['title'] .= $sampleinfo[$key]['name'];
