@@ -60,6 +60,15 @@ function Pages() {
 
 function RecordHit() {
 	global $conn;
+	$user_agent = "";
+	if (isset($_SERVER['HTTP_USER_AGENT'])) {
+		$user_agent = $_SERVER['HTTP_USER_AGENT'];
+	}
+	if (stripos($user_agent, 'DigitalOcean Uptime Probe') !== false) {
+		// Don't log DigitalOcean's uptime checker. It still loads the page (which proves PHP
+		// and MariaDB are alive); we just don't write a sitehits row for it.
+		return;
+	}
 	if (isset($_SERVER['HTTP_REFERER'])) {
 		$referrer = $_SERVER['HTTP_REFERER'];
 	} else {
