@@ -7,7 +7,20 @@
         return; // ancient browser: plain form submit, no progress bar
     }
     form.addEventListener("submit", function (ev) {
+        // The server needs the clicked button (executeButton=update / delete), but
+        // FormData(form) leaves it out. ev.submitter is that button. If this browser
+        // doesn't report one, let the browser do a normal submit (no progress bar).
+        var btn = ev.submitter;
+        if (!btn) {
+            return;
+        }
         ev.preventDefault();
+
+        var data = new FormData(form);
+        if (btn.name) {
+            data.append(btn.name, btn.value);
+        }
+
         var bar = document.getElementById("bar_blank");
         var fill = document.getElementById("bar_color");
         var status = document.getElementById("status");
@@ -35,7 +48,6 @@
             status.textContent = "Upload failed. Check your connection and try again.";
         };
         xhr.open("POST", form.getAttribute("action"));
-        xhr.send(new FormData(form));
+        xhr.send(data);
     });
 })();
-
