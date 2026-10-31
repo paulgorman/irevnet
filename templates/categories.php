@@ -212,7 +212,9 @@ function ListTagButtons($tags) {
 	// $tags array of name, url, quantity. Same colored buttons as a sample page's tags (htmlTags)
 	$colors = array("green","blue","turkese","orange","");
 	$i = 0;
+	// centered column, same as htmlContent() on the about and irev pages
 	?>
+		<div class="content" style="max-width: 960px; margin: 0px auto 0px auto;">
 		<div class="sampleTags">
 	<?
 	foreach ($tags as $tag) {
@@ -222,12 +224,14 @@ function ListTagButtons($tags) {
 			$i = 0;
 		}
 		?>
-			<a href="/tag/<?= $tag['url']; ?>" title="All samples tagged <?= $tag['name']; ?>"><p class="btn big <?= $color; ?>"><?= $tag['name']; ?> (<?= $tag['quantity']; ?>)</p></a>
+			<a href="/tag/<?= $tag['url']; ?>" title="All samples tagged <?= $tag['name']; ?>" style="display: inline-block; margin: 0px 8px 12px 0px;"><p class="btn big <?= $color; ?>"><?= $tag['name']; ?> (<?= $tag['quantity']; ?>)</p></a>
 		<?
 	}
 	?>
 		<div class="clearfix"></div>
 		</div>
+		</div>
+		<br>
 	<?
 }
 
