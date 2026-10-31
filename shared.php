@@ -913,13 +913,18 @@ function TagPage() {
 	// typos land on the closest tag, same as category urls do
 	$tagurl = ClosestWord(MakeURL(strtolower(trim($_REQUEST['tag'] ?? ''))), array_keys($tags));
 	$tag = $tags[$tagurl];
-	// published samples with this tag, highlighted first
+	// published samples with this tag, highlighted first.
+	// skip samples in any unpublished category (Private, Storage): they stay off public listings
 	$samples = array();
 	$query = sprintf(
 		"SELECT `samples`.`oid`, `samples`.`name`, `samples`.`display_name`, `samples`.`url`,
 		 `samples`.`alt_url`, `samples`.`slug`, `samples`.`use_display_name`, `samples`.`is_highlighted`
 		 FROM `samples` INNER JOIN `sampletags` ON `samples`.`oid` = `sampletags`.`oid`
 		 WHERE `sampletags`.`tid` = '%s' AND `samples`.`is_searchable` = 1 AND `samples`.`is_active` = 1
+		 AND NOT EXISTS (
+			SELECT 1 FROM `samplecategories` INNER JOIN `categories` ON `samplecategories`.`cid` = `categories`.`cid`
+			WHERE `samplecategories`.`oid` = `samples`.`oid` AND `categories`.`published` = 0
+		 )
 		 ORDER BY `samples`.`is_highlighted` DESC, `samples`.`name` ASC",
 		mysqli_real_escape_string($conn,$tag['tid'])
 	);
