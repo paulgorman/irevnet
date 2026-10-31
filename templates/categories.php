@@ -208,6 +208,29 @@ function ListCategoriesTextLinks($categories) {
 	echo "</div>\n";
 }
 
+function ListTagButtons($tags) {
+	// $tags array of name, url, quantity. Same colored buttons as a sample page's tags (htmlTags)
+	$colors = array("green","blue","turkese","orange","");
+	$i = 0;
+	?>
+		<div class="sampleTags">
+	<?
+	foreach ($tags as $tag) {
+		$color = $colors[$i];
+		$i++;
+		if ($i == count($colors)) {
+			$i = 0;
+		}
+		?>
+			<a href="/tag/<?= $tag['url']; ?>" title="All samples tagged <?= $tag['name']; ?>"><p class="btn big <?= $color; ?>"><?= $tag['name']; ?> (<?= $tag['quantity']; ?>)</p></a>
+		<?
+	}
+	?>
+		<div class="clearfix"></div>
+		</div>
+	<?
+}
+
 function ListSampleCarousel($category,$samples) {
 	?>
 		<div id="goCarousel"></div>

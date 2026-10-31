@@ -894,9 +894,68 @@ function CategoriesList() {
 	}
 }
 
+function VisibleSampleSQL() {
+	// SQL fragment: this sample shows up on public listings. Active, searchable,
+	// and not in any unpublished category (Private, Storage)
+	return " AND `samples`.`is_searchable` = 1 AND `samples`.`is_active` = 1
+		 AND NOT EXISTS (SELECT 1 FROM `samplecategories`
+		   INNER JOIN `categories` ON `samplecategories`.`cid` = `categories`.`cid`
+		   WHERE `samplecategories`.`oid` = `samples`.`oid` AND `categories`.`published` = 0)";
+}
+
+function TagIndex() {
+	// every tag that has visible samples, as buttons: /tag/ or /tags
+	global $conn;
+	require_once("templates/header.php");
+	require_once("templates/categories.php");
+	$meta = array();
+	$tags = array();
+	$query = "SELECT `tags`.`name`, COUNT(*) AS `quantity`
+		 FROM `tags` INNER JOIN `sampletags` ON `tags`.`tid` = `sampletags`.`tid`
+		 INNER JOIN `samples` ON `samples`.`oid` = `sampletags`.`oid`
+		 WHERE 1" . VisibleSampleSQL() . "
+		 GROUP BY `tags`.`tid` ORDER BY `tags`.`name` ASC";
+	$result = mysqli_query($conn,$query);
+	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+		$tags[] = array(
+			'name' => $row['name'],
+			'url' => MakeURL($row['name']),
+			'quantity' => $row['quantity']
+		);
+	}
+	$names = array();
+	foreach ($tags as $tag) {
+		$names[] = $tag['name'];
+	}
+	$meta['keywords'] = "iRev.net, Presence, Inner Revolution Networks, " . implode(", ", $names) . ".";
+	$meta['description'] = "Portfolio samples by tag: " . implode(", ", $names) . ".";
+	$meta['title'] = "Tags - Paul Gorman's Online Portfolio";
+	$meta['url'] = CurPageURL();
+	$meta['image'] = "";
+	$meta['breadcrumb'][0]['name'] = "Tags";
+	$meta['breadcrumb'][0]['url'] = curServerURL() . "tag/";
+	htmlHeader($meta);
+	htmlMasthead($meta);
+	htmlDropDownNavigationSingle(gatherNavData());
+	htmlWavesShortStart();
+	htmlBreadcrumb($meta);
+	htmlBodyStart();
+	if (count($tags) > 0) {
+		ListTagButtons($tags);
+	} else {
+		ErrorDisplay("Tags Unavailable!");
+	}
+	htmlFooter($meta);
+}
+
 function TagPage() {
 	// all published samples with one tag: /tag/posed, /tag/special-event
 	global $conn;
+	if (isEmpty($_REQUEST['tag'] ?? '')) {
+		// no tag asked for: show them all
+		TagIndex();
+		return;
+	}
 	require_once("templates/header.php");
 	require_once("templates/categories.php");
 	$meta = array();
@@ -913,18 +972,13 @@ function TagPage() {
 	// typos land on the closest tag, same as category urls do
 	$tagurl = ClosestWord(MakeURL(strtolower(trim($_REQUEST['tag'] ?? ''))), array_keys($tags));
 	$tag = $tags[$tagurl];
-	// published samples with this tag, highlighted first.
-	// skip samples in any unpublished category (Private, Storage): they stay off public listings
+	// visible samples with this tag, highlighted first
 	$samples = array();
 	$query = sprintf(
 		"SELECT `samples`.`oid`, `samples`.`name`, `samples`.`display_name`, `samples`.`url`,
 		 `samples`.`alt_url`, `samples`.`slug`, `samples`.`use_display_name`, `samples`.`is_highlighted`
 		 FROM `samples` INNER JOIN `sampletags` ON `samples`.`oid` = `sampletags`.`oid`
-		 WHERE `sampletags`.`tid` = '%s' AND `samples`.`is_searchable` = 1 AND `samples`.`is_active` = 1
-		 AND NOT EXISTS (
-			SELECT 1 FROM `samplecategories` INNER JOIN `categories` ON `samplecategories`.`cid` = `categories`.`cid`
-			WHERE `samplecategories`.`oid` = `samples`.`oid` AND `categories`.`published` = 0
-		 )
+		 WHERE `sampletags`.`tid` = '%s'" . VisibleSampleSQL() . "
 		 ORDER BY `samples`.`is_highlighted` DESC, `samples`.`name` ASC",
 		mysqli_real_escape_string($conn,$tag['tid'])
 	);
@@ -991,8 +1045,8 @@ function TagPage() {
 	if (count($samples) > 0) {
 		$meta['image'] = CurServerURL() . "i/sample/" . reset($samples)['filename'];
 	}
-	$meta['breadcrumb'][0]['name'] = "Portfolio Samples";
-	$meta['breadcrumb'][0]['url'] = curServerURL() . "portfolio/";
+	$meta['breadcrumb'][0]['name'] = "Tags";
+	$meta['breadcrumb'][0]['url'] = curServerURL() . "tag/";
 	$meta['breadcrumb'][1]['name'] = $tag['name'];
 	$meta['breadcrumb'][1]['url'] = curServerURL() . "tag/" . $tagurl;
 	htmlHeader($meta);
