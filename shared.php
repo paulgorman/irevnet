@@ -4142,30 +4142,23 @@ function ScriptTime($starttime) {
 }
 
 function CurPageURL() {
-	$pageURL = 'http';
-	if (isset($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"]) == "on") {
-		$pageURL .= "s";
-	}
-	$pageURL .= "://";
-	if ($_SERVER["SERVER_PORT"] != "80") {
-		$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-	} else {
-		$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
-	}
+	// server URL already ends in "/" and REQUEST_URI starts with one
+	$pageURL = rtrim(CurServerURL(), "/") . $_SERVER["REQUEST_URI"];
 	$pageURL = preg_replace('/\?.*/', '', $pageURL); // drop any query string crap that comes in from Facebook Like/Share links
 	return $pageURL;
 }
 
 function CurServerURL() {
-	$serverURL = "http";
+	$scheme = "http";
+	$defaultPort = "80";
 	if (isset($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"]) == "on") {
-		$serverURL .= "s";
+		$scheme = "https";
+		$defaultPort = "443";
 	}
-	$serverURL .= "://";
-	if ($_SERVER["SERVER_PORT"] != "80") {
-		$serverURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"];
-	} else {
-		$serverURL .= $_SERVER["SERVER_NAME"];
+	$serverURL = $scheme . "://" . $_SERVER["SERVER_NAME"];
+	// only show the port when it isn't the usual one for http (80) or https (443)
+	if ($_SERVER["SERVER_PORT"] != $defaultPort) {
+		$serverURL .= ":" . $_SERVER["SERVER_PORT"];
 	}
 	$serverURL .= "/";
 	return $serverURL;
