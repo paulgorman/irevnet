@@ -894,6 +894,116 @@ function CategoriesList() {
 	}
 }
 
+function TagPage() {
+	// all published samples with one tag: /tag/posed, /tag/special-event
+	global $conn;
+	require_once("templates/header.php");
+	require_once("templates/categories.php");
+	$meta = array();
+	// every tag, keyed by its URL-ified name
+	$tags = array();
+	$result = mysqli_query($conn, "SELECT `tid`, `name` FROM `tags`");
+	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+		$tags[MakeURL($row['name'])] = $row;
+	}
+	if (count($tags) == 0) {
+		ErrorDisplay("Tags Unavailable!");
+		return;
+	}
+	// typos land on the closest tag, same as category urls do
+	$tagurl = ClosestWord(MakeURL(strtolower(trim($_REQUEST['tag'] ?? ''))), array_keys($tags));
+	$tag = $tags[$tagurl];
+	// published samples with this tag, highlighted first
+	$samples = array();
+	$query = sprintf(
+		"SELECT `samples`.`oid`, `samples`.`name`, `samples`.`display_name`, `samples`.`url`,
+		 `samples`.`alt_url`, `samples`.`slug`, `samples`.`use_display_name`, `samples`.`is_highlighted`
+		 FROM `samples` INNER JOIN `sampletags` ON `samples`.`oid` = `sampletags`.`oid`
+		 WHERE `sampletags`.`tid` = '%s' AND `samples`.`is_searchable` = 1 AND `samples`.`is_active` = 1
+		 ORDER BY `samples`.`is_highlighted` DESC, `samples`.`name` ASC",
+		mysqli_real_escape_string($conn,$tag['tid'])
+	);
+	$result = mysqli_query($conn,$query);
+	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+		// samples come from all sorts of categories, so each one gets the same
+		// real name / display name choice its own sample page would make (see obfuscateSampleInfo)
+		$obfuscateMe = 0;
+		if ((int)$row['use_display_name'] === 1) {
+			$obfuscateMe++;
+		}
+		if ($_SESSION['obfuscate'] == "1") {
+			$obfuscateMe++;
+		}
+		$query = sprintf(
+			"SELECT `force_display_names` FROM `categories` WHERE `cid` = '%s'",
+			mysqli_real_escape_string($conn,getSampleCategory($row['oid']))
+		);
+		$catrow = mysqli_fetch_array(mysqli_query($conn,$query), MYSQLI_ASSOC);
+		$force = $catrow['force_display_names'] ?? '';
+		if ($force === "Y") {
+			$obfuscateMe++;
+		}
+		if ($force === "N") {
+			// this category MUST show full real names
+			$obfuscateMe = -9;
+		}
+		if ($obfuscateMe > 0) {
+			$samples[$row['oid']]['name'] = $row['display_name'];
+			$samples[$row['oid']]['url'] = $row['alt_url'];
+			$samples[$row['oid']]['slug'] = str_ireplace($row['name'], $row['display_name'], $row['slug']);
+		} else {
+			$samples[$row['oid']]['name'] = $row['name'];
+			$samples[$row['oid']]['url'] = $row['url'];
+			$samples[$row['oid']]['slug'] = $row['slug'];
+		}
+		$samples[$row['oid']]['oid'] = $row['oid'];
+		$samples[$row['oid']]['is_highlighted'] = $row['is_highlighted'];
+		$query = sprintf(
+			"SELECT `filename`,`thumbwidth`,`thumbheight`
+			 FROM `media` WHERE `oid` = %s ORDER BY `is_highlighted` DESC, `width` DESC LIMIT 0,1",
+			mysqli_real_escape_string($conn,$row['oid'])
+		);
+		$rowphoto = mysqli_fetch_array(mysqli_query($conn,$query), MYSQLI_ASSOC);
+		$samples[$row['oid']]['filename'] = $rowphoto['filename'] ?? '';
+		$samples[$row['oid']]['thumbwidth'] = $rowphoto['thumbwidth'] ?? 0;
+		$samples[$row['oid']]['thumbheight'] = $rowphoto['thumbheight'] ?? 0;
+	}
+	$names = array();
+	foreach ($samples as $sample) {
+		$names[] = $sample['name'];
+	}
+	$count = count($samples) . (count($samples) == 1 ? " sample" : " samples");
+	// meta
+	$meta['keywords'] = "iRev.net, Presence, Inner Revolution Networks, " . $tag['name'] . ", " . implode(", ", $names) . ".";
+	$meta['description'] = "Portfolio samples tagged " . $tag['name'];
+	if (count($names) > 0) {
+		$meta['description'] .= ", including " . implode(", ", $names);
+	}
+	$meta['description'] .= ".";
+	$meta['title'] = $tag['name'] . " - Paul Gorman's Online Portfolio";
+	$meta['url'] = CurPageURL();
+	if (count($samples) > 0) {
+		$meta['image'] = CurServerURL() . "i/sample/" . reset($samples)['filename'];
+	}
+	$meta['breadcrumb'][0]['name'] = "Portfolio Samples";
+	$meta['breadcrumb'][0]['url'] = curServerURL() . "portfolio/";
+	$meta['breadcrumb'][1]['name'] = $tag['name'];
+	$meta['breadcrumb'][1]['url'] = curServerURL() . "tag/" . $tagurl;
+	htmlHeader($meta);
+	htmlMasthead($meta);
+	htmlDropDownNavigationSingle(gatherNavData());
+	htmlWavesShortStart();
+	htmlBreadcrumb($meta);
+	htmlBodyStart();
+	if (count($samples) > 0) {
+		ListSamplesForCategory($tag['name'], $samples);
+		ListSamplesTextLinks(array('category' => $tag['name'], 'description' => $count), $samples);
+	} else {
+		ErrorDisplay("Nothing is tagged " . $tag['name'] . " yet.");
+	}
+	htmlFooter($meta);
+}
+
 function GetPageContent($page) {
 	global $conn;
 	$query = "SELECT `html` FROM `pages` WHERE `pagename` = '$page'";

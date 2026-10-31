@@ -18,6 +18,11 @@
 			CategoriesList();
 			ScriptTime($starttime);
 			break;
+		case "findbytag":
+			RecordHit();
+			TagPage();
+			ScriptTime($starttime);
+			break;
 		case "sample":
 			RecordHit();
 			SamplePage();

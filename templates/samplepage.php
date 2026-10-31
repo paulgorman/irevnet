@@ -178,7 +178,7 @@ function htmlTags($samples) {
 				$i = 0;
 			}
 			?>
-				<p class="btn big <?= $color; ?>"><?= $samples[$oid]['tags'][$key]; ?></p>
+				<a href="/tag/<?= MakeURL($samples[$oid]['tags'][$key]); ?>" title="All samples tagged <?= $samples[$oid]['tags'][$key]; ?>"><p class="btn big <?= $color; ?>"><?= $samples[$oid]['tags'][$key]; ?></p></a>
 			<?
 		}
 	}
