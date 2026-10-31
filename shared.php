@@ -982,6 +982,7 @@ function TagPage() {
 	$meta['description'] .= ".";
 	$meta['title'] = $tag['name'] . " - Paul Gorman's Online Portfolio";
 	$meta['url'] = CurPageURL();
+	$meta['image'] = "";
 	if (count($samples) > 0) {
 		$meta['image'] = CurServerURL() . "i/sample/" . reset($samples)['filename'];
 	}
