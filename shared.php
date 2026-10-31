@@ -932,6 +932,7 @@ function TagIndex() {
 	$meta['title'] = "Tags - Paul Gorman's Online Portfolio";
 	$meta['url'] = CurPageURL();
 	$meta['image'] = "";
+	$meta['css'][] = "Rb-ui.css"; // the colored .btn buttons, same as a sample page's tags
 	$meta['breadcrumb'][0]['name'] = "Tags";
 	$meta['breadcrumb'][0]['url'] = curServerURL() . "tag/";
 	htmlHeader($meta);
