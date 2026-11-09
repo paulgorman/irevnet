@@ -2,9 +2,8 @@
 
 	Design and Programming:	Paul Gorman
 	Contact: presence@irev.net
-	Twitter: @presence
 	Site: http://irev.net/
-	Location: Seattle, Washington
+	Location: Auburn, Washington
 
 	Site Effects: FWDesign
 	Site: http://codecanyon.net/user/FWDesign
@@ -19,7 +18,7 @@
 	Doctype: HTML5
 	IDE: Vim
 	Software: Gimp, HexChat, Adobe Creative Suite
-	OS: FreeBSD, Apache, PHP7, MariaDB
+	OS: Ubuntu, Apache, PHP, MariaDB
 
 /*
 

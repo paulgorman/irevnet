@@ -2919,6 +2919,9 @@ function AdminSaveSingleCategory($cid) {
 	// save an existing category that was just edited
 	global $conn;
 	global $dirlocation;
+	// no new image uploaded? then these stay NULL, so editing just the text doesn't spew warnings
+	$fileid = NULL;
+	$filename = NULL;
 	if (CheckForFiles()) {
 		list ($fileid, $filename) = SaveFile("category")[0]; // for Categories, only one image uploaded.
 		$newfileid = ResizeImage($fileid,"category"); // 728x90
@@ -3978,6 +3981,7 @@ function nicetime($date) {
 		$difference = $now - $unix_date;
 		$tense = "ago";
 	} else if ($now == $unix_date) {
+		$difference = 0; // zero seconds, so the math below has something to chew on
 		$tense = "Just now";
 	} else {
 		$difference = $unix_date - $now;
