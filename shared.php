@@ -2712,7 +2712,7 @@ function AdminListLocations() {
 	global $conn;
 	$query = "SELECT `lid`, `city`, `state` FROM `locations` ORDER BY `state`, `city`";
 	$result = mysqli_query($conn,$query);
-	$locationslist = array();
+	$locations = array(); // zero locations is still a list, have an empty array now even if it doesn't get filled.
 	while ($row = mysqli_fetch_assoc($result)) {
 		$locations[] = array(
 			"lid" => $row['lid'],
@@ -2768,7 +2768,7 @@ function AdminListTags() {
 	global $conn;
 	$query = "SELECT `tid`, `name` FROM `tags`";
 	$result = mysqli_query($conn,$query);
-	$categorieslist = array();
+	$tags = array(); // count() on nothing is fatal in PHP 8, create an empty array even if not filled below.
 	while ($row = mysqli_fetch_assoc($result)) {
 		$tags[] = array(
 			"tid" => $row['tid'],
@@ -3546,11 +3546,109 @@ function AdminSaveNewSubCategory() {
 	}
 }
 
+/*
+ *  TurnPhotoUprightByExifOrientation()
+ *
+ *  Phones don't actually rotate the pixels when you hold them sideways. They
+ *  save the picture however the sensor saw it, then stick a note in the EXIF
+ *  ("Orientation") saying which way is up. Browsers read the note. GD does
+ *  NOT, and the resized copy we make has no EXIF at all, so without this the
+ *  web-sized photo lands on its side. Ask me how I know. (Hi-vis vest, 2026.)
+ *
+ *  Hand it the GD image and the path to the original file the image came
+ *  from. You get back a GD image with the pixels actually turned upright.
+ *  The original file on disk is never touched: it keeps its EXIF note, and
+ *  browsers already show it the right way up.
+ *
+ *  The eight EXIF Orientation values, for the next time someone asks:
+ *    1 = already upright, do nothing
+ *    2 = mirrored left-to-right
+ *    3 = upside down (turn 180)
+ *    4 = mirrored top-to-bottom
+ *    5 = mirrored, and turned on its side
+ *    6 = on its side, needs a turn clockwise (the usual iPhone portrait shot)
+ *    7 = mirrored, and on its other side
+ *    8 = on its other side, needs a turn counter-clockwise
+ *
+ *  Careful: imagerotate() turns COUNTER-clockwise for positive angles, so
+ *  "turn it clockwise 90" is imagerotate(..., -90). Yes, that's backwards.
+ */
+function TurnPhotoUprightByExifOrientation($photo_image, $path_to_original_photo) {
+
+	// GD couldn't even open the JPEG? Nothing to turn. ResizeImage() deals with the mess.
+	if ($photo_image === FALSE) {
+		return $photo_image;
+	}
+
+	// No EXIF support compiled in? Then we can't read the note, so leave it alone.
+	if (!function_exists('exif_read_data')) {
+		return $photo_image;
+	}
+
+	// The @ hushes "corrupt EXIF" warnings from weird files. No EXIF just means no note.
+	$exif_details_from_photo = @exif_read_data($path_to_original_photo);
+
+	if (empty($exif_details_from_photo['Orientation'])) {
+		return $photo_image;
+	}
+
+	$exif_orientation = (int) $exif_details_from_photo['Orientation'];
+
+	if ($exif_orientation == 1) {
+		// already upright, the easy one
+		return $photo_image;
+	}
+
+	// First: un-mirror the ones that are mirrored (2, 4, 5, 7).
+	if ($exif_orientation == 2 || $exif_orientation == 5 || $exif_orientation == 7) {
+		imageflip($photo_image, IMG_FLIP_HORIZONTAL);
+	}
+
+	if ($exif_orientation == 4) {
+		imageflip($photo_image, IMG_FLIP_VERTICAL);
+	}
+
+	// Second: turn it. Remember, negative degrees means clockwise in GD land.
+	$degrees_to_turn_counter_clockwise = 0;
+
+	if ($exif_orientation == 3) {
+		$degrees_to_turn_counter_clockwise = 180;
+	}
+
+	if ($exif_orientation == 6 || $exif_orientation == 7) {
+		$degrees_to_turn_counter_clockwise = -90;
+	}
+
+	if ($exif_orientation == 5 || $exif_orientation == 8) {
+		$degrees_to_turn_counter_clockwise = 90;
+	}
+
+	if ($degrees_to_turn_counter_clockwise != 0) {
+
+		// imagerotate() hands back a brand new image, so toss the sideways one
+		// right away. These are 4032x3024 phone photos, ~48 MB each in GD,
+		// and the memory_limit is 256M. Don't hoard.
+		$turned_photo_image = imagerotate($photo_image, $degrees_to_turn_counter_clockwise, 0);
+
+		if ($turned_photo_image === FALSE) {
+			error_log("TurnPhotoUprightByExifOrientation: imagerotate failed on $path_to_original_photo, leaving it sideways");
+			return $photo_image;
+		}
+
+		imagedestroy($photo_image);
+		$photo_image = $turned_photo_image;
+	}
+
+	return $photo_image;
+}
+
 function ResizeImage($fileid,$purpose) {
 	// Resize image according to its purpose
 	global $dirlocation;
 	if (preg_match("/\.jpg/",$fileid)) {
 		$origimage = imagecreatefromjpeg("$dirlocation/i/$purpose/original-$fileid");
+		// phone photos come in sideways with an EXIF note saying "I'm sideways". Fix before resizing.
+		$origimage = TurnPhotoUprightByExifOrientation($origimage, "$dirlocation/i/$purpose/original-$fileid");
 	} elseif (preg_match("/\.png/",$fileid)) {
 		$origimage = imagecreatefrompng("$dirlocation/i/$purpose/original-$fileid");
 		imagealphablending($origimage, true);
