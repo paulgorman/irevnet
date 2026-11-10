@@ -1,48 +1,53 @@
 <?
 /* admin html templates */
 
+/*
+ *  htmlAdminLogin() - the "who goes there" page in front of /admin.
+ *  Rebuilt mobile first, because the old one was a grid of
+ *  col1/col2 divs with no viewport tag, so on a phone it rendered at
+ *  desktop width and shrank to ant size. Now: labels above inputs, inputs
+ *  the full width of the phone, one big button. Styles live at the bottom
+ *  of templates/css/admin.css, under the "MOBILE FIRST" banner.
+ *  $message is the "nope, wrong password" text from the login check, or empty.
+ */
 function htmlAdminLogin($message) {
-	?>
-	<html>
+	?><!DOCTYPE html>
+	<html lang="en">
 		<head>
-			<title>iRev.net Admin Login</title>
+			<meta charset="utf-8">
+			<!-- THIS is the line that makes phones stop pretending to be a 980px desktop -->
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<title>iRev.net. Admin Login</title>
 			<link rel="stylesheet" type="text/css" href="/templates/css/responsiveboilerplate.css">
 			<link rel="stylesheet" type="text/css" href="/templates/css/irev.css">
+			<link rel="stylesheet" type="text/css" href="/templates/css/admin.css">
 		</head>
-		<body>
-		<form method="POST" action="/login">
-			<div class="content" style="max-width: 960px; margin: 0px auto 0px auto;">
-			<br>
-				<div class="box dark carousel col12" style="border: 1px solid #fff;">
-					<? if (!isEmpty($message)) { 
-						?>
-							<div class="col12" style="width: 95%;margin: 10px;padding: 10px;border: 1px solid #fff; background-color: orange"><?= $message; ?></div>
-						  <div class="clearfix">
-						<?
-					}
-					?>
-					<div class="col1">&nbsp;</div>
-					<div class="col2" style="text-align:left;">Username:</div>
-					<div class="col2"><input type="text" name="username"></div>
-					<div class="clearfix"></div>
-					<div class="col12">&nbsp;</div>
-					<div class="clearfix">
-					<div class="col1">&nbsp;</div>
-					<div class="col2" style="text-align:left;">Password:</div>
-					<div class="col2"><input type="password" name="password"></div>
-					<div class="col12">&nbsp;</div>
-					<div class="clearfix">
-					<div class="col1">&nbsp;</div>
-					<div class="col2">&nbsp;</div><div class="col1"><input type="submit" value="Log In"></div>
-					<div class="col12">&nbsp;</div>
-				</div>
-			</div>
-		</form>
+		<body class="AdminLoginPage">
+			<form method="POST" action="/login" class="AdminLoginBox dark">
+
+				<div class="AdminLoginTitle">iRev Admin</div>
+
+				<? if (!isEmpty($message)) { ?>
+					<div class="AdminLoginMessage"><?= $message; ?></div>
+				<? } ?>
+
+				<!-- autocapitalize off: otherwise the iPhone helpfully types "Presence" with a capital P -->
+				<label class="AdminLoginLabel" for="AdminLoginUsername">Username</label>
+				<input class="AdminLoginInput" type="text" name="username" id="AdminLoginUsername"
+					autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
+
+				<!-- autocomplete="current-password" lets the iPhone offer the saved password -->
+				<label class="AdminLoginLabel" for="AdminLoginPassword">Password</label>
+				<input class="AdminLoginInput" type="password" name="password" id="AdminLoginPassword"
+					autocomplete="current-password">
+
+				<input class="AdminLoginButton" type="submit" value="Log In">
+
+			</form>
 		</body>
 	</html>
 	<?
 }
-
 
 function AdminHead($curfunction,$adminfunctions) {
 	$tempadminfunctionsflipped = array_flip ($adminfunctions);

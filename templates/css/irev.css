@@ -696,7 +696,6 @@ a.showLink:hover, a.hideLink:hover {
 	padding-right:12px;	
 	padding-bottom:12px;
 	background: #1b1927;
-	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJod…IgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
 	background: -moz-linear-gradient(top, #1b1927 0%, #1a1929 5%, #1a1826 17%, #171723 21%, #171522 36%, #13131f 40%, #14121f 49%, #13111c 49%, #12101b 53%, #12121c 62%, #10101a 65%, #100e19 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#1b1927), color-stop(5%,#1a1929), color-stop(17%,#1a1826), color-stop(21%,#171723), color-stop(36%,#171522), color-stop(40%,#13131f), color-stop(49%,#14121f), color-stop(49%,#13111c), color-stop(53%,#12101b), color-stop(62%,#12121c), color-stop(65%,#10101a), color-stop(100%,#100e19));
 	background: -webkit-linear-gradient(top, #1b1927 0%,#1a1929 5%,#1a1826 17%,#171723 21%,#171522 36%,#13131f 40%,#14121f 49%,#13111c 49%,#12101b 53%,#12121c 62%,#10101a 65%,#100e19 100%);
@@ -818,7 +817,6 @@ a.showLink:hover, a.hideLink:hover {
 }
 #photoGrid .photo:hover{
 	background: #cfcfcf;
-	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJod…BoZWlnaHQ9IjEiIGZpbGw9InVybCgjZ3JhZC11Y2dnLWdlbmVyYXRlZCkiIC8+Cjwvc3ZnPg==);
 	background: -moz-linear-gradient(top, #cfcfcf 0%, #c6c6c6 3%, #c0c0c0 6%, #c0c0c0 15%, #b4b4b4 41%, #afafaf 47%, #adadad 53%, #a3a3a3 56%, #9d9d9d 71%, #999999 74%, #9e9e9e 76%, #9f9f9f 79%, #9c9c9c 82%, #9d9d9d 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cfcfcf), color-stop(3%,#c6c6c6), color-stop(6%,#c0c0c0), color-stop(15%,#c0c0c0), color-stop(41%,#b4b4b4), color-stop(47%,#afafaf), color-stop(53%,#adadad), color-stop(56%,#a3a3a3), color-stop(71%,#9d9d9d), color-stop(74%,#999999), color-stop(76%,#9e9e9e), color-stop(79%,#9f9f9f), color-stop(82%,#9c9c9c), color-stop(100%,#9d9d9d));
 	background: -webkit-linear-gradient(top, #cfcfcf 0%,#c6c6c6 3%,#c0c0c0 6%,#c0c0c0 15%,#b4b4b4 41%,#afafaf 47%,#adadad 53%,#a3a3a3 56%,#9d9d9d 71%,#999999 74%,#9e9e9e 76%,#9f9f9f 79%,#9c9c9c 82%,#9d9d9d 100%);
@@ -831,7 +829,6 @@ a.showLink:hover, a.hideLink:hover {
 	text-decoration: none;
 	border: 1px solid #505050;
 	background: #cfcfcf;
-	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJod…BoZWlnaHQ9IjEiIGZpbGw9InVybCgjZ3JhZC11Y2dnLWdlbmVyYXRlZCkiIC8+Cjwvc3ZnPg==);
 	background: -moz-linear-gradient(top, #cfcfcf 0%, #c6c6c6 3%, #c0c0c0 6%, #c0c0c0 15%, #b4b4b4 41%, #afafaf 47%, #adadad 53%, #a3a3a3 56%, #9d9d9d 71%, #999999 74%, #9e9e9e 76%, #9f9f9f 79%, #9c9c9c 82%, #9d9d9d 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cfcfcf), color-stop(3%,#c6c6c6), color-stop(6%,#c0c0c0), color-stop(15%,#c0c0c0), color-stop(41%,#b4b4b4), color-stop(47%,#afafaf), color-stop(53%,#adadad), color-stop(56%,#a3a3a3), color-stop(71%,#9d9d9d), color-stop(74%,#999999), color-stop(76%,#9e9e9e), color-stop(79%,#9f9f9f), color-stop(82%,#9c9c9c), color-stop(100%,#9d9d9d));
 	background: -webkit-linear-gradient(top, #cfcfcf 0%,#c6c6c6 3%,#c0c0c0 6%,#c0c0c0 15%,#b4b4b4 41%,#afafaf 47%,#adadad 53%,#a3a3a3 56%,#9d9d9d 71%,#999999 74%,#9e9e9e 76%,#9f9f9f 79%,#9c9c9c 82%,#9d9d9d 100%);
@@ -945,7 +942,6 @@ a.showLink:hover, a.hideLink:hover {
 	opacity: .88;
 	filter: alpha(opacity=.88);	
 	background: #1b1927;
-	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJod…IgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
 	background: -moz-linear-gradient(top, #1b1927 0%, #1a1929 5%, #1a1826 17%, #171723 21%, #171522 36%, #13131f 40%, #14121f 49%, #13111c 49%, #12101b 53%, #12121c 62%, #10101a 65%, #100e19 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#1b1927), color-stop(5%,#1a1929), color-stop(17%,#1a1826), color-stop(21%,#171723), color-stop(36%,#171522), color-stop(40%,#13131f), color-stop(49%,#14121f), color-stop(49%,#13111c), color-stop(53%,#12101b), color-stop(62%,#12121c), color-stop(65%,#10101a), color-stop(100%,#100e19));
 	background: -webkit-linear-gradient(top, #1b1927 0%,#1a1929 5%,#1a1826 17%,#171723 21%,#171522 36%,#13131f 40%,#14121f 49%,#13111c 49%,#12101b 53%,#12121c 62%,#10101a 65%,#100e19 100%);
@@ -971,7 +967,6 @@ a.showLink:hover, a.hideLink:hover {
 	}
 	#sideDrawer .container{	
 		background: #1b1927;
-		background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJod…IgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
 		background: -moz-linear-gradient(top, #1b1927 0%, #1a1929 5%, #1a1826 17%, #171723 21%, #171522 36%, #13131f 40%, #14121f 49%, #13111c 49%, #12101b 53%, #12121c 62%, #10101a 65%, #100e19 100%);
 		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#1b1927), color-stop(5%,#1a1929), color-stop(17%,#1a1826), color-stop(21%,#171723), color-stop(36%,#171522), color-stop(40%,#13131f), color-stop(49%,#14121f), color-stop(49%,#13111c), color-stop(53%,#12101b), color-stop(62%,#12121c), color-stop(65%,#10101a), color-stop(100%,#100e19));
 		background: -webkit-linear-gradient(top, #1b1927 0%,#1a1929 5%,#1a1826 17%,#171723 21%,#171522 36%,#13131f 40%,#14121f 49%,#13111c 49%,#12101b 53%,#12121c 62%,#10101a 65%,#100e19 100%);
