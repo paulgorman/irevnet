@@ -26,7 +26,7 @@ function htmlHeader($dataArray) {
 		<meta name="description" content="<?= $dataArray['description']; ?>" />
 		<meta name="keywords" content="<?= $dataArray['keywords']; ?>" />
 		<meta name="copyright" content="&copy; <?= date("Y"); ?> iRev.net" />
-		<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta property="og:title" content="<?= $dataArray['title']; ?>" />
 		<meta property="og:type" content="article" />
 		<meta property="og:image" content="<?= $dataArray['image']; ?>" />

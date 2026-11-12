@@ -1091,7 +1091,7 @@ function HomePage() {
 	htmlDropDownNavigationSingle(gatherNavData());
 	//htmlDropDownNavigationFull(gatherNavData());
 	htmlWavesFullStart();
-	homePageCarousel(gatherHighlightedsamples());
+	//homePageCarousel(gatherHighlightedsamples());
 	homePageHighlightedGallery(gatherHighlightedsamples());
 	htmlBodyStart();
 	htmlHomePageTop();
@@ -1100,7 +1100,7 @@ function HomePage() {
 	*/
 	htmlHomePageContent($content);
 	//htmlBreadcrumb($meta);
-	fwdConsCarousel(); // dump this stuff in at the bottom of html
+	//fwdConsCarousel(); // dump this stuff in at the bottom of html
 	homePageHighlightedGalleryJS();
 	/* Don't want the drawer pullout 
 	htmlHomePageCategoriesJS();
